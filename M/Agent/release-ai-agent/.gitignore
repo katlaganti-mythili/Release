@@ -1,0 +1,18 @@
+# Environment Variables
+.env
+.env.local
+
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+venv/
+env/
+.pytest_cache/
+
+# Streamlit
+.streamlit/
+
+# Temporary files
+_tmp_validation.txt
+validation_report.txt
