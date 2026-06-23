@@ -10,12 +10,19 @@ def extract_version_from_change_summary(text: str) -> str:
     """
     if not text:
         return ""
+        
+    appendix_pattern = re.compile(r'(Appendix\s+[AB].*?)(?=Appendix\s+[C-Z]|$)', re.DOTALL | re.IGNORECASE)
+    appendices = appendix_pattern.findall(text)
+    search_text = " ".join(appendices) if appendices else text
+
     matches = re.findall(
-        r"Build\s+Number[:\s]*(?:ARM|OpenGrid)?\s*(\d[\d.\[\]]+)",
-        text,
-        re.IGNORECASE,
+        r"Build\s+Number[:\s]*(?:.{0,150}?)(?<!\d)(\d+(?:\.\d+)+(?:\[\d+\])?(?:[\s\-]*Patch\s*\d+)?(?:[\s\-]*Hotfix\s*\d+)?)",
+        search_text,
+        re.IGNORECASE | re.DOTALL,
     )
-    return matches[-1] if matches else ""
+    if not matches:
+        return ""
+    return sorted(matches, key=version_sort_key)[-1].strip()
 
 
 def extract_version_from_path(path: str) -> str:
@@ -40,7 +47,7 @@ def version_sort_key(version: str) -> tuple[int, ...]:
     if not normalized:
         return tuple()
 
-    return tuple(int(part) for part in normalized.split(".") if part.isdigit())
+    return tuple(int(part) for part in re.findall(r'\d+', normalized))
 
 
 def compare_versions(v1: str, v2: str) -> bool:

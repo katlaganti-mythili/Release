@@ -7,9 +7,10 @@ class DateValidator:
         re.compile(r"\b\d{4}-\d{1,2}-\d{1,2}\b"),
         re.compile(r"\b\d{1,2}-\d{1,2}-\d{4}\b"),
         re.compile(r"\b\d{1,2}/\d{1,2}/\d{4}\b"),
-        re.compile(r"\b\d{1,2}\s+[A-Za-z]{3,9}\s+\d{4}\b"),
-        re.compile(r"\b[A-Za-z]{3,9}\s+\d{1,2}(?:,\s*|\s+)\d{4}\b"),
-        re.compile(r"\b[A-Za-z]{3,9}-\d{1,2}-\d{4}\b"),
+        re.compile(r"\b\d{1,2}\s+[A-Za-z]{3,9}\s+\d{4}\b", re.IGNORECASE),
+        re.compile(r"\b\d{1,2}-[A-Za-z]{3,9}-\d{4}\b", re.IGNORECASE),
+        re.compile(r"\b[A-Za-z]{3,9}\s+\d{1,2}(?:,\s*|\s+)\d{4}\b", re.IGNORECASE),
+        re.compile(r"\b[A-Za-z]{3,9}-\d{1,2}-\d{4}\b", re.IGNORECASE),
     ]
 
     DATE_FORMATS = [
@@ -20,6 +21,8 @@ class DateValidator:
         "%d/%m/%Y",
         "%d %b %Y",
         "%d %B %Y",
+        "%d-%b-%Y",
+        "%d-%B-%Y",
         "%b %d, %Y",
         "%B %d, %Y",
         "%b %d %Y",

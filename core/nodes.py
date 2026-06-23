@@ -29,13 +29,18 @@ def extract_pdf(state: ReleaseState):
     # The change summary last row is the authoritative latest release version.
     cs_version = extract_version_from_change_summary(state.text)
     if cs_version:
-        state.system_determined_latest_version = normalize_version(cs_version)
+        state.system_determined_latest_version = cs_version
     elif (
         not getattr(state, "system_determined_latest_version", "")
         or state.system_determined_latest_version == "Unknown"
     ):
-        state.system_determined_latest_version = extract_version_from_path(state.pdf_path)
-            
+        # Extract bracket version directly from path to prevent loss of bracket notation
+        path_match = re.search(r'(\d+(?:\.\d+)+(?:\[\d+\])?)', state.pdf_path)
+        if path_match:
+            state.system_determined_latest_version = path_match.group(1)
+        else:
+            state.system_determined_latest_version = extract_version_from_path(state.pdf_path)
+
         # Fallback: Extract version from the first page of the PDF text if filename fails
         if not state.system_determined_latest_version or state.system_determined_latest_version == "Unknown":
             fallback_match = re.search(r'(?:Version|Release|Build)\s*[:\-]?\s*(\d+(?:\.\d+)+(?:\[\d+\])?)', state.text[:1500], re.IGNORECASE)
@@ -92,7 +97,7 @@ def validate_pdfs(state: ReleaseState):
         res["original_link"] = path_mapping.get(path, path)
         return res
 
-    with concurrent.futures.ThreadPoolExecutor(max_workers=10) as executor:
+    with concurrent.futures.ThreadPoolExecutor(max_workers=25) as executor:
         results = list(executor.map(check_pdf, state.resolved_paths))
 
     state.pdf_validation = results

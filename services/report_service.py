@@ -6,6 +6,7 @@ from agents.version_validator import VersionValidator
 from agents.validators.date_validator import DateValidator
 from services.ollama_service import OllamaService
 from services.jira_service import JiraService
+from utils.version_utils import extract_version_from_change_summary
 
 MASTER_PROMPT = """# Release Validation Report
 
@@ -40,15 +41,41 @@ class ReportService:
         if not build_blocks:
             return None, None
 
-        if latest_version and latest_version != "Unknown":
-            for key, data in build_blocks.items():
-                # Normalize [N] bracket notation to .N so "2.3.10.7.1" matches "2.3.10.7[1]; …"
-                normalized_key = re.sub(r"\[(\d+)\]", r".\1", key)
-                if latest_version in normalized_key or latest_version in key:
-                    return key, data
+        merged_key = []
+        merged_tickets = set()
+        merged_content = []
 
-        first_key = next(iter(build_blocks))
-        return first_key, build_blocks[first_key]
+        if latest_version and latest_version != "Unknown":
+            base_match = re.search(r"(\d+(?:\.\d+)+(?:\[\d+\])?)", latest_version)
+            base_version = base_match.group(1) if base_match else latest_version
+            norm_base = re.sub(r"\[(\d+)\]", r".\1", base_version)
+            
+            def has_ver(v, text_block):
+                return bool(re.search(rf'(?<!\d){re.escape(v)}(?!\d)', text_block))
+                
+            for key, data in build_blocks.items():
+                if key == "GLOBAL_APPENDIX_TICKETS":
+                    continue
+                norm_key = re.sub(r"\[(\d+)\]", r".\1", key)
+                
+                # Strictly match the header to avoid pulling in old releases that merely mention the new version
+                if has_ver(base_version, key) or has_ver(norm_base, norm_key):
+                    merged_key.append(key)
+                    merged_tickets.update(data.get("tickets", []))
+                    merged_content.append(data.get("content", ""))
+                    
+            if merged_key:
+                global_data = build_blocks.get("GLOBAL_APPENDIX_TICKETS", {})
+                global_content = global_data.get("content", "")
+                global_tickets = global_data.get("tickets", [])
+                if global_tickets and (has_ver(base_version, global_content) or has_ver(norm_base, global_content) or len(build_blocks) <= 2):
+                    merged_tickets.update(global_tickets)
+                return " & ".join(merged_key), {"tickets": list(merged_tickets), "content": "\n".join(merged_content)}
+
+        last_key = list(build_blocks.keys())[-1]
+        if last_key == "GLOBAL_APPENDIX_TICKETS" and len(build_blocks) > 1:
+            last_key = list(build_blocks.keys())[-2]
+        return last_key, build_blocks[last_key]
 
     def extract_build_blocks(self, text: str) -> dict:
         results = {}
@@ -57,24 +84,54 @@ class ReportService:
         appendices = appendix_pattern.findall(text)
         
         search_areas = appendices if appendices else [text]
+        global_tickets = set()
+        global_content_text = ""
+        is_appendix = bool(appendices)
         
         for area in search_areas:
-            parts = re.split(r'Build\s+Number:\s*(?:(?:ARM|OpenGrid)\s*)?', area, flags=re.IGNORECASE)
-            for part in parts[1:]:
-                # Extract up to the first newline
-                lines = part.strip().split('\n', 1)
-                if not lines:
-                    continue
-                header = lines[0].strip() # e.g. "4.0; 05-22-2026"
-                content = lines[1] if len(lines) > 1 else ""
+            parts = re.split(r'Build\s+Number[:\s]*', area, flags=re.IGNORECASE)
+            
+            if is_appendix and parts[0].strip():
+                global_content_text += "\n" + parts[0].strip()
+                found_pre = re.findall(r'\b([A-Za-z]{2,15}\s*-\s*\d+)\b', parts[0])
+                global_tickets.update(t.upper().replace(' ', '') for t in found_pre)
                 
-                # Only look for MNOSD or WAMAT in this specific block
-                tickets = list(set(re.findall(r'((?:MNOSD|WAMAT)-\d+)', content)))
+            for part in parts[1:]:
+                clean_part = part.strip()
+                if not clean_part:
+                    continue
+                
+                # Extract header using the version pattern to ensure version is included
+                block_version_match = re.search(
+                    r'^(.{0,150}?)(?<!\d)(\d+(?:\.\d+)+(?:\[\d+\])?(?:[\s\-]*Patch\s*\d+)?(?:[\s\-]*Hotfix\s*\d+)?)', 
+                    clean_part, 
+                    re.IGNORECASE | re.DOTALL
+                )
+                
+                if block_version_match:
+                    prefix = re.sub(r'\s+', ' ', block_version_match.group(1).strip())
+                    version_str = block_version_match.group(2)
+                    header = f"{prefix} {version_str}".strip()
+                else:
+                    lines = clean_part.split('\n')
+                    header_lines = []
+                    for l in lines[:3]:
+                        if l.strip():
+                            header_lines.append(l.strip())
+                    header = " ".join(header_lines)[:150]
+                
+                # Look for tickets in the entire block instead of just the content line
+                # Standard Jira tickets: 2-15 uppercase letters followed by optional spaces, hyphen and digits
+                found_tickets = re.findall(r'\b([A-Za-z]{2,15}\s*-\s*\d+)\b', clean_part)
+                tickets = [t.upper().replace(' ', '') for t in found_tickets]
                 
                 if header not in results:
                     results[header] = {"tickets": set(), "content": ""}
                 results[header]["tickets"].update(tickets)
-                results[header]["content"] += "\n" + content
+                results[header]["content"] += "\n" + clean_part
+                
+        if global_tickets:
+            results["GLOBAL_APPENDIX_TICKETS"] = {"tickets": list(global_tickets), "content": global_content_text}
                 
         return {k: {"tickets": list(v["tickets"]), "content": v["content"]} for k, v in results.items()}
 
@@ -97,30 +154,28 @@ class ReportService:
         pdf_links_status = "FAIL (Contains broken or missing links)" if pdf_missing > 0 else "PASS"
         
         # Determine Version, Date, Jira Tickets, Release Type, and TOC status Deterministically
-        version_result = self.version_validator.validate(text)
-        latest_text_version = version_result.get("latest_version", "UNKNOWN")
+        # Extract the version strictly from the Change Summary to avoid false positives (e.g. IP addresses)
+        latest_text_version = extract_version_from_change_summary(text) or "UNKNOWN"
 
         if latest_text_version == "UNKNOWN":
             version_consistency = "FAIL"
-            version_details = "No versions were found in the document text."
+            version_details = "No versions were found in the document's change summary."
         elif latest_text_version == system_determined_latest_version:
             version_consistency = "PASS"
             version_details = f"The latest version found in the document ({latest_text_version}) matches the expected latest version."
         else:
             version_consistency = "FAIL"
             version_details = (
-                f"The highest version found in the document ({latest_text_version}) does not match "
+                f"The latest version found in the Change Summary ({latest_text_version}) does not match "
                 f"the expected latest version ({system_determined_latest_version}). Historical older versions are ignored."
             )
-
+            
         change_summary_latest_version = (
-            f"CORRECT ({system_determined_latest_version})"
-            if latest_text_version == system_determined_latest_version
+            "CORRECT" if latest_text_version == system_determined_latest_version
             else f"INCORRECT (Found {latest_text_version}, expected {system_determined_latest_version})"
         )
 
         date_validation_str = ""
-        jira_tickets_str = ""
         matching_block = []
         latest_block_content = ""
 
@@ -136,20 +191,32 @@ class ReportService:
         intro_text = text[:3000] if text else ""
         block_text = f"{selected_block_key or ''}\n{latest_block_content}".strip()
 
-        # Prioritize finding the date in the specific build block first
-        date_result = self.date_validator.validate(block_text)
-        if date_result.get("status") == "NOT_FOUND" and intro_text:
-            date_result = self.date_validator.validate(intro_text)
+        # Always extract from both to ensure we get the Home Page date even if block date exists
+        block_date_result = self.date_validator.validate(block_text)
+        intro_date_result = self.date_validator.validate(intro_text[:1500])
+            
+        if block_date_result.get("status") != "NOT_FOUND":
+            date_result = block_date_result
+        elif intro_date_result.get("status") != "NOT_FOUND":
+            date_result = intro_date_result
+        else:
+            date_result = block_date_result
             
         date_found = date_result.get("normalized_release_date", "Not Found")
-        raw_date = date_result.get("release_date", "Not Found")
+        
+        home_date_match = re.search(r'\b([A-Za-z]{3}-\d{1,2}-\d{4})\b', intro_text[:1500], re.IGNORECASE)
+        if home_date_match:
+            parts = home_date_match.group(1).split('-')
+            raw_date = f"{parts[0].capitalize()}-{parts[1]}-{parts[2]}"
+        else:
+            raw_date = intro_date_result.get("release_date", "Not Found")
+            
         relation = date_result.get("relation", "unknown")
         date_status = date_result.get("status", "NOT_FOUND")
 
         path_lower = pdf_path.lower()
         intro_text_lower = intro_text.lower()
 
-        # Broaden detection: Check the filename, the Jira build block, AND the introductory PDF text
         if ('hf' in path_lower or 'hotfix' in path_lower or 
             'hf' in latest_block_content or 'hotfix' in latest_block_content or 
             'hotfix' in intro_text_lower):
@@ -192,18 +259,20 @@ class ReportService:
                 nav = e.get("status", "FAIL")
                 vers = e.get("versions_found", [])
                 dates = e.get("dates_found", [])
-                # Check if latest version appears in this section (normalize bracket notation)
-                latest_present = any(
-                    re.sub(r"\[(\d+)\]", r".\1", v) == system_determined_latest_version
-                    for v in vers
-                )
+                
+                # Check if latest version appears in this section
+                latest_present = system_determined_latest_version in vers
+                if not latest_present:
+                    base_sys_match = re.search(r"(\d+(?:\.\d+)+(?:\[\d+\])?)", system_determined_latest_version)
+                    if base_sys_match:
+                        base_sys = base_sys_match.group(1)
+                        latest_present = any(base_sys in v for v in vers)
+
                 latest_cell = "Present" if latest_present else "Not found"
                 # Show first 3 dates (trim older historical ones if too many)
-                dates_cell = ", ".join(sorted(set(dates))[:3]) if dates else "-"
-                toc_validation_str += (
-                    f"| {e.get('heading', '')} | {e.get('page', '')} | {nav} "
-                    f"| {latest_cell} | {dates_cell} |\n"
-                )
+                dates_cell = ", ".join(dates[:3]) if dates else "-"
+                toc_validation_str += f"| {e.get('heading', 'Unknown')} | {e.get('page', '-')} | {nav} | {latest_cell} | {dates_cell} |\n"
+
         elif toc_validation:
             toc_source = toc_validation.get("toc_source", "")
             source_note = f" ({toc_source} TOC)" if toc_source else ""
@@ -216,7 +285,7 @@ class ReportService:
             toc_validation_str = (
                 "- **TOC Structure:** INVALID\n"
                 "- **Navigation Correctness:** FAIL\n"
-                "- **Details:** TOC validation did not run."
+                "- **Details:** TOC validation was not performed."
             )
 
         if matching_block:
@@ -230,7 +299,7 @@ class ReportService:
                 status = "[Verified in Jira]" if is_valid else "[NOT FOUND in Jira]"
                 return f"- jira ticket found ({system_determined_latest_version}): {t} {status}"
             
-            with concurrent.futures.ThreadPoolExecutor(max_workers=10) as executor:
+            with concurrent.futures.ThreadPoolExecutor(max_workers=25) as executor:
                 results = list(executor.map(check_ticket, matching_block))
                 
             jira_lines.extend(results)

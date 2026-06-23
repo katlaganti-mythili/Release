@@ -117,11 +117,17 @@ class TOCValidator:
                     section_versions.extend(version_re.findall(page_text))
                     
                     if latest_version:
+                        base_match = re.search(r"(\d+(?:\.\d+)+(?:\[\d+\])?)", latest_version)
+                        base_version = base_match.group(1) if base_match else latest_version
+
+                        if base_version.lower() in page_text.lower():
+                            section_versions.append(latest_version)
+
                         lines = page_text.split('\n')
                         for i, line in enumerate(lines):
-                            normalized_line = re.sub(r"\[(\d+)\]", r".\1", line)
-                            # Only extract dates if they are near the latest version OR near "release date" labels
-                            if (latest_version in normalized_line) or ("release date" in line.lower()) or ("date:" in line.lower()):
+                            line_lower = line.lower()
+                            # Only extract dates if they are near the latest version OR near date labels
+                            if (base_version.lower() in line_lower) or ("release date" in line_lower) or ("date:" in line_lower) or ("product release notes" in line_lower):
                                 block = "\n".join(lines[max(0, i-1):i+3])
                                 section_dates.extend(date_re.findall(block))
                     else:

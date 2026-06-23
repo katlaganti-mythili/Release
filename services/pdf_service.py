@@ -1,4 +1,4 @@
-import pdfplumber
+import fitz
 
 
 class PDFService:
@@ -7,8 +7,8 @@ class PDFService:
 
         text = ""
 
-        with pdfplumber.open(file) as pdf:
-            for page in pdf.pages:
-                text += page.extract_text() or ""
+        with fitz.open(file) as doc:
+            for page in doc:
+                text += page.get_text() or ""
 
         return text
