@@ -15,11 +15,9 @@ MASTER_PROMPT = """# Release Validation Report
 - **Detected Latest Version:** {system_determined_latest_version}
 - **Release Type:** {system_determined_release_type}
 
-## 2. Version Validation & Change Summary
+## 2. Version Validation
 - **Latest Version Consistency:** {system_determined_version_consistency}
 - **Details:** {system_determined_version_details}
-- **Change Summary Latest Version Entry:** {system_determined_change_summary_latest_version}
-- **Change Summary Date Match:** {system_determined_change_summary_date_match} (Does the date in the Change Summary exactly match {current_date}?)
 
 ## 3. Release Date Validation
 {system_determined_date_validation}
@@ -159,21 +157,16 @@ class ReportService:
 
         if latest_text_version == "UNKNOWN":
             version_consistency = "FAIL"
-            version_details = "No versions were found in the document's change summary."
+            version_details = "No versions were found in the document."
         elif latest_text_version == system_determined_latest_version:
             version_consistency = "PASS"
             version_details = f"The latest version found in the document ({latest_text_version}) matches the expected latest version."
         else:
             version_consistency = "FAIL"
             version_details = (
-                f"The latest version found in the Change Summary ({latest_text_version}) does not match "
+                f"The latest version found in the document ({latest_text_version}) does not match "
                 f"the expected latest version ({system_determined_latest_version}). Historical older versions are ignored."
             )
-            
-        change_summary_latest_version = (
-            "CORRECT" if latest_text_version == system_determined_latest_version
-            else f"INCORRECT (Found {latest_text_version}, expected {system_determined_latest_version})"
-        )
 
         date_validation_str = ""
         matching_block = []
@@ -231,16 +224,12 @@ class ReportService:
         date_msg = f"Found date: {date_found} (Home Page date found: {raw_date})" if raw_date and raw_date != "Not Found" else f"Found date: {date_found}"
 
         if date_status == "VALID":
-            change_summary_date_match = "YES"
             date_validation_str = f"- **Status:** VALID\n- **Result:** {date_msg}, expected date: {current_date}\n- **Details:** The extracted date matches the expected date."
         elif date_status == "PAST":
-            change_summary_date_match = "NO"
             date_validation_str = f"- **Status:** INVALID\n- **Result:** {date_msg}, expected date: {current_date}\n- **Details:** The extracted date is a previous date ({relation})."
         elif date_status == "FUTURE":
-            change_summary_date_match = "NO"
             date_validation_str = f"- **Status:** INVALID\n- **Result:** {date_msg}, expected date: {current_date}\n- **Details:** The extracted date is a future date ({relation})."
         else:
-            change_summary_date_match = "NO"
             date_validation_str = f"- **Status:** INVALID\n- **Result:** Found date: Not Found, expected date: {current_date}\n- **Details:** No parseable release date was found in the document block."
 
         if toc_validation and toc_validation.get("entries"):
@@ -296,7 +285,7 @@ class ReportService:
             
             def check_ticket(t):
                 is_valid = self.jira_service.ticket_exists(t)
-                status = "[Verified in Jira]" if is_valid else "[NOT FOUND in Jira]"
+                status = "[Verified in Jira]" if is_valid else "[found in pdf]"
                 return f"- jira ticket found ({system_determined_latest_version}): {t} {status}"
             
             with concurrent.futures.ThreadPoolExecutor(max_workers=25) as executor:
@@ -314,8 +303,6 @@ class ReportService:
             system_determined_release_type=release_type,
             system_determined_version_consistency=version_consistency,
             system_determined_version_details=version_details,
-            system_determined_change_summary_latest_version=change_summary_latest_version,
-            system_determined_change_summary_date_match=change_summary_date_match,
             system_determined_date_validation=date_validation_str,
             system_determined_jira_tickets=jira_tickets_str,
             system_determined_toc_validation=toc_validation_str,
