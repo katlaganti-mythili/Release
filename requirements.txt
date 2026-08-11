@@ -6,3 +6,10 @@ requests
 python-dotenv
 streamlit
 langgraph
+streamlit
+librosa
+numpy
+pandas
+scikit-learn
+tensorflow
+matplotlib
