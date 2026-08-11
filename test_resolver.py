@@ -4,12 +4,8 @@ import re
 
 class PathResolver:
     def resolve(self, pdf_path: str, link: str) -> str:
-        """
-        Combines the root path of the release document with the relative path inside the link.
-        """
         link = urllib.parse.unquote(link)
         
-        # Handle file:// and file: prefixes properly
         if link.lower().startswith('file://'):
             link = link[7:]
             if re.match(r'^/[a-zA-Z][:|]/', link) or re.match(r'^/[a-zA-Z][:|]\\', link):
@@ -30,15 +26,23 @@ class PathResolver:
 
         base_dir = os.path.dirname(os.path.abspath(pdf_path))
         
-        # Autocorrect network links that incorrectly start with a single backslash
         if link.startswith("\\") and not link.startswith("\\\\"):
-            # Check if it looks like an IP address or common network path start
             parts = link.strip("\\").split("\\")
             if parts and ("." in parts[0] or len(parts[0]) > 1):
                 link = "\\" + link
                 
-        if os.path.isabs(link) or link.startswith(r"\\"):
+        if os.path.isabs(link) or link.startswith(r"\\") or link.startswith("//"):
             return os.path.normpath(link)
             
-        # Resolve the relative path against the PDF's directory
         return os.path.normpath(os.path.join(base_dir, link))
+
+r = PathResolver()
+pdf = "C:\\docs\\release.pdf"
+print(r.resolve(pdf, "file:///C|/temp/doc.pdf"))
+print(r.resolve(pdf, "file:///C:/temp/doc.pdf"))
+print(r.resolve(pdf, "file://server/share/doc.pdf"))
+print(r.resolve(pdf, "file:////server/share/doc.pdf"))
+print(r.resolve(pdf, "file:///\\\\server\\share\\doc.pdf"))
+print(r.resolve(pdf, "\\server\\share\\doc.pdf"))
+print(r.resolve(pdf, "relative/doc.pdf"))
+print(r.resolve(pdf, "file:relative/doc.pdf"))

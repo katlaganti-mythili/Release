@@ -1,0 +1,48 @@
+# Release Validation Report
+
+## 1. File Summary
+- **File:** OpenGrid 2.3.15.0[0] Security Administration Release Notes.pdf
+- **Detected Latest Version:** 2.3.15.0[0]
+- **Release Type:** PATCH
+
+## 2. Version Validation
+- **Latest Version Consistency:** PASS
+- **Details:** The latest version found in the document (2.3.15.0[0]) matches the expected latest version.
+
+## 3. Release Date Validation
+- **Status:** INVALID
+- **Result:** Found date: 06-24-2026 (Home Page date found: Jun-24-2026), expected date: 08-07-2026
+- **Details:** The extracted date is a previous date (previous).
+
+## 4. Jira Tickets (Latest Version)
+**Extracted Tickets List (from PDF):**
+- jira ticket found (2.3.15.0[0]): WAMAT-756 [found in pdf]
+
+**Excel vs PDF Comparison (Under Jira Validation):**
+**Excel Validation Skipped:**
+No matching Application Name found in Excel for 'Security Administration'.
+
+## 5. Table of Contents
+- **TOC Structure:** VALID (visual TOC)
+- **Navigation Correctness:** FAIL
+- **Details:** Validated 5 TOC entries (visual TOC); 4 passed navigation check, 1 failed.
+
+**Per-Section Version & Date Validation:**
+
+| Section | Page | Navigation | Latest Version (2.3.15.0[0]) | Date(s) Found |
+|---------|------|------------|------------------------------------------------------|---------------|
+| Release Summary | 4 | PASS | Present | 06-24-2026 |
+| Release Change Summary | 5 | PASS | Present | - |
+| Issue Summary | 6 | FAIL | Present | 06-24-2026 |
+| Appendix A | 8 | PASS | Present | 06-24-2026 |
+| Appendix B | 18 | PASS | Present | 06-24-2026 |
+
+
+## 6. Internal Document Links
+- **Total .pdf paths checked:** 1
+- **Successfully opened:** 1 | **Missing:** 0 | **Exists but failed to open:** 0
+
+*Note: Web browsers block direct links to local files for security. Please copy the paths and paste them into File Explorer.*
+
+**PDF links extracted from document:**
+- Path: `Documentation/Installation/OpenGrid 2.3.15.0 Security Administration Database Upgrade Guide.pdf` | Status: ✅ Successfully opened

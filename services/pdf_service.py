@@ -7,7 +7,9 @@ class PDFService:
 
         text = ""
 
-        with fitz.open(file) as doc:
+        with open(file, "rb") as f:
+            pdf_bytes = f.read()
+        with fitz.open(stream=pdf_bytes, filetype="pdf") as doc:
             for page in doc:
                 text += page.get_text() or ""
 

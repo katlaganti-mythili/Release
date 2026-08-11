@@ -1,0 +1,69 @@
+# Release Validation Report
+
+## 1. File Summary
+- **File:** OpenGrid 2.3.15.0 Release Notes.pdf
+- **Detected Latest Version:** 162.70.125.120
+- **Release Type:** PATCH
+
+## 2. Version Validation
+- **Latest Version Consistency:** FAIL
+- **Details:** No versions were found in the document.
+
+## 3. Release Date Validation
+- **Status:** INVALID
+- **Result:** Found date: 06-24-2026 (Home Page date found: Jun-24-2026), expected date: 08-11-2026
+- **Details:** The extracted date is a previous date (previous).
+
+## 4. Jira Tickets (Latest Version)
+**Extracted SSC IDs (Latest Version from PDF):**
+- SSC ID found (162.70.125.120): WAMAT-79643 [found in pdf]
+- SSC ID found (162.70.125.120): WAMAT-76998 [found in pdf]
+- SSC ID found (162.70.125.120): MNOSD-28210 [found in pdf]
+- SSC ID found (162.70.125.120): WAMAT-79666 [found in pdf]
+- SSC ID found (162.70.125.120): WAMAT-77200 [found in pdf]
+- SSC ID found (162.70.125.120): WAMAT-78789 [found in pdf]
+- SSC ID found (162.70.125.120): WAMAT-78106 [found in pdf]
+- SSC ID found (162.70.125.120): WAMAT-78114 [found in pdf]
+- SSC ID found (162.70.125.120): WAMAT-78117 [found in pdf]
+- SSC ID found (162.70.125.120): WAMAT-78119 [found in pdf]
+
+**Excel vs PDF Comparison (Under Jira Validation):**
+**Excel Validation Skipped:**
+No matching Application Name found in Excel for '2.3.15.0'.
+
+## 5. Table of Contents
+- **TOC Structure:** VALID (visual TOC)
+- **Navigation Correctness:** PASS
+- **Details:** Validated 7 TOC entries (visual TOC); 7 passed navigation check, 0 failed.
+
+**Per-Section Version & Date Validation:**
+
+| Section | Page | Navigation | Latest Version (162.70.125.120) | Date(s) Found |
+|---------|------|------------|------------------------------------------------------|---------------|
+| What’s New What’s Updated | 4 | PASS | Not found | - |
+| oduc s e ease ____________________________________________________________ 1.3 OpenGrid Containerized delivery | 5 | PASS | Not found | - |
+| 1.4.2 Pay Item and Invoice view now accessible from WC List and As-Built Reporting _____________ 5 1.4.3 Migration of Vehicle Time Reporting to the latest framework | 6 | PASS | Not found | - |
+| 1.4.4 Miscellaneous Changes _________________________________________________________ 6 1.5 Summary of Technical Changes | 10 | PASS | Not found | - |
+| S_C O G a o a a a age __________________________________________ 0 2 OpenGrid Installation Document References | 11 | PASS | Not found | - |
+| Summary of System Variable and Property | 12 | PASS | Not found | - |
+| Summary of Securable Object Changes | 13 | PASS | Not found | - |
+
+
+## 6. Internal Document Links
+- **Total .pdf paths checked:** 11
+- **Successfully opened:** 11 | **Missing:** 0 | **Exists but failed to open:** 0
+
+*Note: Web browsers block direct links to local files for security. Please copy the paths and paste them into File Explorer.*
+
+**PDF links extracted from document:**
+- Path: `Documentation/Installation/OpenGrid 2.3.15.0[0] Upgrade Guidelines.pdf` | Status: ✅ Successfully opened
+- Path: `Documentation/Installation/Microsoft Edge WebView2 Runtime Installation.pdf` | Status: ✅ Successfully opened
+- Path: `Documentation/Installation/Service Request Portal 2.3.15.0[0] Install Guidelines.pdf` | Status: ✅ Successfully opened
+- Path: `Documentation/Installation/OpenGrid 2.3.15.0[0] Logging setup.pdf` | Status: ✅ Successfully opened
+- Path: `Documentation/Installation/OpenGrid 2.3.15.0[0] Spatial Configuration Guide.pdf` | Status: ✅ Successfully opened
+- Path: `Documentation/Installation/OpenGrid_ADFS_Configuration_Details.pdf` | Status: ✅ Successfully opened
+- Path: `Documentation/Installation/OpenGrid 2.3.15 Hardware and Software Technical Specifications.pdf` | Status: ✅ Successfully opened
+- Path: `Documentation/Installation/OpenGrid 2.3.15.0[0] System Properties.pdf` | Status: ✅ Successfully opened
+- Path: `Documentation/Installation/Service Request Portal Properties 2.3.15.0[0].pdf` | Status: ✅ Successfully opened
+- Path: `Documentation/Installation/Service_Request_Portal_2.3.15.0[0]_Map_Configuration_Guide.pdf` | Status: ✅ Successfully opened
+- Path: `Documentation/Installation/OpenGrid 2.3.15.0[0] Asset and Work Installation Guide.pdf` | Status: ✅ Successfully opened

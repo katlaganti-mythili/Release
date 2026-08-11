@@ -1,5 +1,6 @@
 import fitz
 import re
+import math
 
 
 class TOCValidator:
@@ -41,121 +42,148 @@ class TOCValidator:
         return []
 
     def _heading_on_page(self, page_text, heading):
-        """Return True if the first four significant heading words appear on the page."""
+        """Return True if heading tokens are strongly present on the page text."""
         norm_h = re.sub(r"\s+", " ", re.sub(r"[^a-z0-9 ]", " ", heading.lower())).strip()
         norm_p = re.sub(r"\s+", " ", re.sub(r"[^a-z0-9 ]", " ", page_text.lower()))
-        tokens = [t for t in norm_h.split() if len(t) > 1][:4]
+        tokens = [t for t in norm_h.split() if len(t) > 1][:5]
         if not tokens:
             return False
-        return " ".join(tokens) in norm_p
+
+        # Fast path: exact phrase for the first few tokens.
+        if " ".join(tokens[:4]) in norm_p:
+            return True
+
+        # Fallback: token coverage threshold to handle line-break/OCR variations.
+        page_tokens = set(norm_p.split())
+        matched = sum(1 for t in tokens if t in page_tokens)
+        required = max(2, int(math.ceil(len(tokens) * 0.6)))
+        return matched >= required
 
     def validate(self, pdf_path, latest_version=None):
-        doc = fitz.open(pdf_path)
-        total_pages = len(doc)
+        with open(pdf_path, "rb") as f:
+            pdf_bytes = f.read()
+        with fitz.open(stream=pdf_bytes, filetype="pdf") as doc:
+            total_pages = len(doc)
 
-        # Prefer PDF metadata TOC; fall back to visual (hyperlink-based) TOC
-        raw_toc = doc.get_toc()
-        if raw_toc:
-            toc_entries = [(h.strip(), t) for _, h, t in raw_toc if h.strip()]
-            toc_source = "metadata"
-        else:
-            toc_entries = self._extract_visual_toc(doc)
-            toc_source = "visual"
-
-        if not toc_entries:
-            return {
-                "toc_structure": "INVALID",
-                "toc_source": toc_source,
-                "navigation_correctness": "FAIL",
-                "details": (
-                    "No table of contents entries found "
-                    "(no PDF metadata bookmarks and no visual TOC page with internal links)."
-                ),
-                "total_entries": 0,
-                "valid_entries": 0,
-                "invalid_entries": 0,
-                "entries": [],
-            }
-
-        # Determine per-section page ranges
-        section_ranges = []
-        for idx, (heading, target) in enumerate(toc_entries):
-            end_page = toc_entries[idx + 1][1] - 1 if idx + 1 < len(toc_entries) else total_pages
-            section_ranges.append((heading, target, max(target, end_page)))
-
-        version_re = re.compile(r"\d+\.\d+\.\d+\.\d+(?:\[\d+\])?")
-        date_re = re.compile(
-            r"\b\d{2}[-/]\d{2}[-/]\d{4}\b|\b\d{4}[-/]\d{2}[-/]\d{2}\b"
-            r"|\b[A-Za-z]{3,9}[-\s]+\d{1,2}[,\s-]*\d{4}\b",
-            re.IGNORECASE,
-        )
-
-        entries = []
-        valid_entries = 0
-
-        for heading, target_page, end_page in section_ranges:
-            page_in_range = 1 <= target_page <= total_pages
-            navigation_ok = False
-            reason = ""
-            section_versions = []
-            section_dates = []
-
-            if not page_in_range:
-                reason = f"Target page {target_page} is out of range (document has {total_pages} pages)."
+            # Prefer PDF metadata TOC; fall back to visual (hyperlink-based) TOC
+            raw_toc = doc.get_toc()
+            if raw_toc:
+                toc_entries = [(h.strip(), t) for _, h, t in raw_toc if h.strip()]
+                toc_source = "metadata"
             else:
-                target_text = doc[target_page - 1].get_text("text")
-                navigation_ok = self._heading_on_page(target_text, heading)
-                reason = (
-                    "Heading text found on target page."
-                    if navigation_ok
-                    else "Heading text not found on target page."
-                )
-                # Collect versions and dates from every page in this section
-                for p in range(target_page - 1, min(end_page, total_pages)):
-                    page_text = doc[p].get_text("text")
-                    # Collect all versions
-                    section_versions.extend(version_re.findall(page_text))
-                    
-                    if latest_version:
-                        base_match = re.search(r"(\d+(?:\.\d+)+(?:\[\d+\])?)", latest_version)
-                        base_version = base_match.group(1) if base_match else latest_version
+                toc_entries = self._extract_visual_toc(doc)
+                toc_source = "visual"
 
-                        if base_version.lower() in page_text.lower():
-                            section_versions.append(latest_version)
+            if not toc_entries:
+                return {
+                    "toc_structure": "INVALID",
+                    "toc_source": toc_source,
+                    "navigation_correctness": "FAIL",
+                    "details": (
+                        "No table of contents entries found "
+                        "(no PDF metadata bookmarks and no visual TOC page with internal links)."
+                    ),
+                    "total_entries": 0,
+                    "valid_entries": 0,
+                    "invalid_entries": 0,
+                    "entries": [],
+                }
 
-                        lines = page_text.split('\n')
-                        for i, line in enumerate(lines):
-                            line_lower = line.lower()
-                            # Only extract dates if they are near the latest version OR near date labels
-                            if (base_version.lower() in line_lower) or ("release date" in line_lower) or ("date:" in line_lower) or ("product release notes" in line_lower):
-                                block = "\n".join(lines[max(0, i-1):i+3])
-                                section_dates.extend(date_re.findall(block))
-                    else:
-                        section_dates.extend(date_re.findall(page_text))
+            # Determine per-section page ranges
+            section_ranges = []
+            for idx, (heading, target) in enumerate(toc_entries):
+                end_page = toc_entries[idx + 1][1] - 1 if idx + 1 < len(toc_entries) else total_pages
+                section_ranges.append((heading, target, max(target, end_page)))
 
-            if navigation_ok:
-                valid_entries += 1
+            version_re = re.compile(r"\d+\.\d+\.\d+\.\d+(?:\[\d+\])?")
+            date_re = re.compile(
+                r"\b\d{2}[-/]\d{2}[-/]\d{4}\b|\b\d{4}[-/]\d{2}[-/]\d{2}\b"
+                r"|\b[A-Za-z]{3,9}[-\s]+\d{1,2}[,\s-]*\d{4}\b",
+                re.IGNORECASE,
+            )
 
-            entries.append({
-                "heading": heading,
-                "page": target_page,
-                "status": "PASS" if navigation_ok else "FAIL",
-                "details": reason,
-                "versions_found": sorted(set(section_versions)),
-                "dates_found": sorted(set(section_dates)),
-            })
+            entries = []
+            valid_entries = 0
 
-        invalid_entries = len(entries) - valid_entries
-        return {
-            "toc_structure": "VALID",
-            "toc_source": toc_source,
-            "navigation_correctness": "PASS" if invalid_entries == 0 else "FAIL",
-            "details": (
-                f"Validated {len(entries)} TOC entries ({toc_source} TOC); "
-                f"{valid_entries} passed navigation check, {invalid_entries} failed."
-            ),
-            "total_entries": len(entries),
-            "valid_entries": valid_entries,
-            "invalid_entries": invalid_entries,
-            "entries": entries,
-        }
+            for heading, target_page, end_page in section_ranges:
+                page_in_range = 1 <= target_page <= total_pages
+                navigation_ok = False
+                reason = ""
+                section_versions = []
+                section_dates = []
+
+                if not page_in_range:
+                    reason = f"Target page {target_page} is out of range (document has {total_pages} pages)."
+                else:
+                    target_text = doc[target_page - 1].get_text("text")
+                    navigation_ok = self._heading_on_page(target_text, heading)
+                    reason = ""
+                    if not navigation_ok:
+                        # Tolerate off-by-one link target or page text extraction differences.
+                        prev_idx = target_page - 2
+                        next_idx = target_page
+                        if 0 <= prev_idx < total_pages:
+                            prev_text = doc[prev_idx].get_text("text")
+                            if self._heading_on_page(prev_text, heading):
+                                navigation_ok = True
+                                reason = "Heading text found on adjacent page (target-1)."
+                        if not navigation_ok and 0 <= next_idx < total_pages:
+                            next_text = doc[next_idx].get_text("text")
+                            if self._heading_on_page(next_text, heading):
+                                navigation_ok = True
+                                reason = "Heading text found on adjacent page (target+1)."
+                    if not reason:
+                        reason = (
+                            "Heading text found on target page."
+                            if navigation_ok
+                            else "Heading text not found on target page."
+                        )
+                    # Collect versions and dates from every page in this section
+                    for p in range(target_page - 1, min(end_page, total_pages)):
+                        page_text = doc[p].get_text("text")
+                        # Collect all versions
+                        section_versions.extend(version_re.findall(page_text))
+                        
+                        if latest_version:
+                            base_match = re.search(r"(\d+(?:\.\d+)+(?:\[\d+\])?)", latest_version)
+                            base_version = base_match.group(1) if base_match else latest_version
+
+                            if base_version.lower() in page_text.lower():
+                                section_versions.append(latest_version)
+
+                            lines = page_text.split('\n')
+                            for i, line in enumerate(lines):
+                                line_lower = line.lower()
+                                # Only extract dates if they are near the latest version OR near date labels
+                                if (base_version.lower() in line_lower) or ("release date" in line_lower) or ("date:" in line_lower) or ("product release notes" in line_lower):
+                                    block = "\n".join(lines[max(0, i-1):i+3])
+                                    section_dates.extend(date_re.findall(block))
+                        else:
+                            section_dates.extend(date_re.findall(page_text))
+
+                if navigation_ok:
+                    valid_entries += 1
+
+                entries.append({
+                    "heading": heading,
+                    "page": target_page,
+                    "status": "PASS" if navigation_ok else "FAIL",
+                    "details": reason,
+                    "versions_found": sorted(set(section_versions)),
+                    "dates_found": sorted(set(section_dates)),
+                })
+
+            invalid_entries = len(entries) - valid_entries
+            return {
+                "toc_structure": "VALID",
+                "toc_source": toc_source,
+                "navigation_correctness": "PASS" if invalid_entries == 0 else "FAIL",
+                "details": (
+                    f"Validated {len(entries)} TOC entries ({toc_source} TOC); "
+                    f"{valid_entries} passed navigation check, {invalid_entries} failed."
+                ),
+                "total_entries": len(entries),
+                "valid_entries": valid_entries,
+                "invalid_entries": invalid_entries,
+                "entries": entries,
+            }

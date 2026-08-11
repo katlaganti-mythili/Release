@@ -1,0 +1,78 @@
+# Release Validation Report
+
+## 1. File Summary
+- **File:** OpenGrid 2.3.15.1[0] Asset Manager Release Notes.pdf
+- **Detected Latest Version:** 2.3.15.1[0]
+- **Release Type:** PATCH
+
+## 2. Version Validation
+- **Latest Version Consistency:** PASS
+- **Details:** The latest version found in the document (2.3.15.1[0]) matches the expected latest version.
+
+## 3. Release Date Validation
+- **Status:** INVALID
+- **Result:** Found date: 04-28-2023 (Home Page date found: Jul-24-2026), expected date: 08-11-2026
+- **Details:** The extracted date is a previous date (previous).
+
+## 4. Jira Tickets (Latest Version)
+**Extracted SSC IDs (Latest Version from PDF):**
+- SSC ID found (2.3.15.1[0]): WAMAT-79900 [found in pdf]
+- SSC ID found (2.3.15.1[0]): WAMAT-80474 [found in pdf]
+- SSC ID found (2.3.15.1[0]): MNOSD-27780 [found in pdf]
+
+**Excel vs PDF Comparison (Under Jira Validation):**
+### Excel vs Release Notes Validation
+
+**Latest Build Number:** 2.3.15.1[0]
+
+**Duplicate SSC IDs:** None
+
+#### Full Comparison Table
+<table>
+<thead><tr><th>Application Name (Excel)</th><th>Application Name (PDF)</th><th>Account Name (Excel)</th><th>Account Name (PDF)</th><th>Client Tracking Number (Excel)</th><th>Client Tracking Number (PDF)</th><th>SSC ID (Excel)</th><th>SSC ID (PDF)</th><th>Issue Description (Excel)</th><th>Issue Description (PDF)</th><th>Functional Model (Excel)</th><th>Functional Model (PDF)</th><th>Status</th><th>Remarks</th></tr></thead>
+<tbody>
+<tr><td>Asset Manager 2.3.15.1[0]</td><td>Asset Manager</td><td>CGI Internal</td><td>CGI Internal</td><td></td><td></td><td>WAMAT-79900</td><td>WAMAT- 79900</td><td>QAAGL_Unable to Generate Follow-Up Work Request When a Condition Is Created with Survey and Facility or When a Condition Is Created Only with Survey Area ID</td><td>QAAGL_Unable to Generate Follow-Up Work Request When a Condition Is Created with Survey and Facility or When a Condition Is Created Only with Survey Area ID</td><td></td><td>Yes</td><td>PASS</td><td>Matched</td></tr>
+<tr><td>Asset Manager 2.3.15.1[0]</td><td>Asset Manager</td><td>Consolidated Edison (Gas) Company of New York</td><td>Consolidated Edison (Gas) Company of New York</td><td>895900</td><td>895900</td><td>MNOSD-27780</td><td>MNOSD- 27780</td><td>Equivalent Procedure Functionality Not Working when Taking Credit from a different procedure</td><td>Equivalent Procedure Functionality Not Working when Taking Credit from a different procedure</td><td></td><td>No</td><td>PASS</td><td>Matched</td></tr>
+<tr><td>Asset Manager 2.3.15.1[0]</td><td>Asset Manager</td><td>Rhode Island Energy</td><td>Rhode Island Energy</td><td>RIE</td><td>RIE</td><td>WAMAT-80474</td><td>WAMAT- 80474</td><td>FFOG2.3.13.2.4 -&gt;Master - WR_UPDATE_NOTIFY fails if both Survey Area and Facility ID exist on the WR (ADO 1476630)</td><td>FFOG2.3.13.2.4 -&gt;Master - WR_UPDATE_NOTIFY fails if both Survey Area and Facility ID exist on the WR (ADO 1476630)</td><td></td><td>Yes</td><td>PASS</td><td>Matched</td></tr>
+</tbody>
+</table>
+
+#### Mismatched Details
+No mismatches found.
+
+#### Column Check Summary
+| Column | Match Status |
+|--------|--------------|
+| Account Name | ✔ PASS |
+| Client Tracking Number | ✔ PASS |
+| SSC ID | ✔ PASS |
+| Issue Description | ✔ PASS |
+| Functional Model | ✔ PASS |
+
+#### Overall Result
+**PASSED**
+
+## 5. Table of Contents
+- **TOC Structure:** VALID (visual TOC)
+- **Navigation Correctness:** PASS
+- **Details:** Validated 5 TOC entries (visual TOC); 5 passed navigation check, 0 failed.
+
+**Per-Section Version & Date Validation:**
+
+| Section | Page | Navigation | Latest Version (2.3.15.1[0]) | Date(s) Found |
+|---------|------|------------|------------------------------------------------------|---------------|
+| Release Summary | 4 | PASS | Present | 07-24-2026 |
+| Release Change Summary | 5 | PASS | Present | 07-24-2026 |
+| Issue Summary | 7 | PASS | Present | - |
+| Appendix A | 8 | PASS | Present | 07-24-2026 |
+| Appendix B | 30 | PASS | Present | 07-24-2026 |
+
+
+## 6. Internal Document Links
+- **Total .pdf paths checked:** 1
+- **Successfully opened:** 1 | **Missing:** 0 | **Exists but failed to open:** 0
+
+*Note: Web browsers block direct links to local files for security. Please copy the paths and paste them into File Explorer.*
+
+**PDF links extracted from document:**
+- Path: `Documentation/Installation/OpenGrid 2.3.15.1 Asset Manager-Database Upgrade Guide.pdf` | Status: ✅ Successfully opened

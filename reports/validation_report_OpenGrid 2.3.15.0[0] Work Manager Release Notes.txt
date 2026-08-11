@@ -1,0 +1,91 @@
+# Release Validation Report
+
+## 1. File Summary
+- **File:** OpenGrid 2.3.15.0[0] Work Manager Release Notes.pdf
+- **Detected Latest Version:** 2.3.15.0[0]
+- **Release Type:** PATCH
+
+## 2. Version Validation
+- **Latest Version Consistency:** PASS
+- **Details:** The latest version found in the document (2.3.15.0[0]) matches the expected latest version.
+
+## 3. Release Date Validation
+- **Status:** INVALID
+- **Result:** Found date: 06-24-2026 (Home Page date found: Jun-24-2026), expected date: 08-07-2026
+- **Details:** The extracted date is a previous date (previous).
+
+## 4. Jira Tickets (Latest Version)
+**Extracted Tickets List (from PDF):**
+- jira ticket found (2.3.15.0[0]): WAMAT-53289 [found in pdf]
+- jira ticket found (2.3.15.0[0]): MNOSD-26965 [found in pdf]
+- jira ticket found (2.3.15.0[0]): WAMAT-78995 [found in pdf]
+- jira ticket found (2.3.15.0[0]): MNOSD-28514 [found in pdf]
+- jira ticket found (2.3.15.0[0]): WAMAT-72517 [found in pdf]
+- jira ticket found (2.3.15.0[0]): MNOSD-28468 [found in pdf]
+- jira ticket found (2.3.15.0[0]): MNOSD-25642 [found in pdf]
+- jira ticket found (2.3.15.0[0]): MNOSD-27220 [found in pdf]
+- jira ticket found (2.3.15.0[0]): MNOSD-26761 [found in pdf]
+- jira ticket found (2.3.15.0[0]): WAMAT-639 [found in pdf]
+- jira ticket found (2.3.15.0[0]): WAMAT-756 [found in pdf]
+- jira ticket found (2.3.15.0[0]): WAMAT-78989 [found in pdf]
+- jira ticket found (2.3.15.0[0]): WAMAT-78976 [found in pdf]
+- jira ticket found (2.3.15.0[0]): WAMAT-79666 [found in pdf]
+- jira ticket found (2.3.15.0[0]): WAMAT-78978 [found in pdf]
+- jira ticket found (2.3.15.0[0]): MNOSD-26692 [found in pdf]
+- jira ticket found (2.3.15.0[0]): WAMAT-78990 [found in pdf]
+- jira ticket found (2.3.15.0[0]): MNOSD-28283 [found in pdf]
+- jira ticket found (2.3.15.0[0]): WAMAT-78690 [found in pdf]
+- jira ticket found (2.3.15.0[0]): WAMAT-77335 [found in pdf]
+- jira ticket found (2.3.15.0[0]): WAMAT-78977 [found in pdf]
+- jira ticket found (2.3.15.0[0]): WAMAT-78992 [found in pdf]
+- jira ticket found (2.3.15.0[0]): WAMAT-78232 [found in pdf]
+- jira ticket found (2.3.15.0[0]): WAMAT-78220 [found in pdf]
+- jira ticket found (2.3.15.0[0]): MNOSD-28219 [found in pdf]
+- jira ticket found (2.3.15.0[0]): WAMAT-77182 [found in pdf]
+- jira ticket found (2.3.15.0[0]): WAMAT-78230 [found in pdf]
+- jira ticket found (2.3.15.0[0]): WAMAT-77186 [found in pdf]
+- jira ticket found (2.3.15.0[0]): WAMAT-78986 [found in pdf]
+- jira ticket found (2.3.15.0[0]): WAMAT-78980 [found in pdf]
+- jira ticket found (2.3.15.0[0]): WAMAT-78991 [found in pdf]
+- jira ticket found (2.3.15.0[0]): MNOSD-28093 [found in pdf]
+- jira ticket found (2.3.15.0[0]): WAMAT-78789 [found in pdf]
+- jira ticket found (2.3.15.0[0]): MNOSD-28047 [found in pdf]
+- jira ticket found (2.3.15.0[0]): WAMAT-78993 [found in pdf]
+- jira ticket found (2.3.15.0[0]): WAMAT-78982 [found in pdf]
+- jira ticket found (2.3.15.0[0]): WAMAT-78983 [found in pdf]
+- jira ticket found (2.3.15.0[0]): WAMAT-78987 [found in pdf]
+- jira ticket found (2.3.15.0[0]): WAMAT-77190 [found in pdf]
+- jira ticket found (2.3.15.0[0]): WAMAT-78981 [found in pdf]
+- jira ticket found (2.3.15.0[0]): WAMAT-78979 [found in pdf]
+
+**Excel vs PDF Comparison (Under Jira Validation):**
+**Excel Validation Skipped:**
+No matching Application Name found in Excel for 'Work Manager'.
+
+## 5. Table of Contents
+- **TOC Structure:** VALID (visual TOC)
+- **Navigation Correctness:** PASS
+- **Details:** Validated 5 TOC entries (visual TOC); 5 passed navigation check, 0 failed.
+
+**Per-Section Version & Date Validation:**
+
+| Section | Page | Navigation | Latest Version (2.3.15.0[0]) | Date(s) Found |
+|---------|------|------------|------------------------------------------------------|---------------|
+| Release Summary | 4 | PASS | Present | 06-24-2026 |
+| Release Change Summary | 5 | PASS | Present | 06-24-2026 |
+| Issue Summary | 8 | PASS | Present | - |
+| Appendix A | 9 | PASS | Present | 06-24-2026 |
+| Appendix B | 123 | PASS | Present | 06-24-2026 |
+
+
+## 6. Internal Document Links
+- **Total .pdf paths checked:** 4
+- **Successfully opened:** 4 | **Missing:** 0 | **Exists but failed to open:** 0
+
+*Note: Web browsers block direct links to local files for security. Please copy the paths and paste them into File Explorer.*
+
+**PDF links extracted from document:**
+- Path: `Documentation/Installation/ARM 2.3.2.0 ARM Logging setup.pdf` | Status: ✅ Successfully opened
+- Path: `Documentation/Installation/ARM 2.3.7.0 WAS Web Middleware Applications Installation.pdf` | Status: ✅ Successfully opened
+- Path: `Documentation/Installation/ARM 2.3.7.0 WLS Web Middleware Applications Installation.pdf` | Status: ✅ Successfully opened
+- Path: `Documentation/Installation/ARM 2.3.15.0 Work Manager - Database Upgrade Guide.pdf` | Status: ✅ Successfully opened

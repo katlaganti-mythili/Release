@@ -1,0 +1,31 @@
+# Release Validation Report
+
+## 1. File Summary
+- **File:** validation_report.txt
+- **Detected Latest Version:** Unknown
+- **Release Type:** PATCH
+
+## 2. Version Validation
+- **Latest Version Consistency:** FAIL
+- **Details:** No versions were found in the document.
+
+## 3. Release Date Validation
+- **Status:** INVALID
+- **Result:** Found date: 06-24-2026 (Home Page date found: Jun-24-2026), expected date: 07-26-2026
+- **Details:** The extracted date is a previous date (previous).
+
+## 4. Jira Tickets (Latest Version)
+**Extracted Tickets List (from PDF):**
+jira ticket not found in pdf
+
+**Excel vs PDF Comparison:**
+**Excel Validation Skipped:**
+Failed to read Excel file or file is empty.
+
+## 5. Table of Contents
+- **TOC Structure:** INVALID (visual TOC)
+- **Navigation Correctness:** FAIL
+- **Details:** No table of contents entries found (no PDF metadata bookmarks and no visual TOC page with internal links).
+
+## 6. Internal Document Links
+No internal PDF links found.

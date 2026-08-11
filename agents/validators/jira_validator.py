@@ -1,5 +1,17 @@
 import re
 
+TICKET_ID_PATTERN = re.compile(
+    r"(?i)\b((?:MNOSD|WAMAT)\s*[-–—]\s*\d+(?:\s*[-–—]\s*\d+)*(?:[A-Z])?)(?:\s*(?:BUG|SWG))?\b"
+)
+
+
+def normalize_ticket_id(ticket: str) -> str:
+    if not ticket:
+        return ""
+    normalized = re.sub(r"\s+", "", str(ticket)).upper()
+    normalized = normalized.replace("–", "-").replace("—", "-")
+    return normalized
+
 class JiraValidator:
     def __init__(self):
         pass
@@ -38,8 +50,8 @@ class JiraValidator:
         if matches:
             for match in matches:
                 section = match.group(1)
-                found_tickets = re.findall(r"\b([A-Za-z]{2,15}\s*-\s*\d+)\b", section)
-                tickets.update(t.upper().replace(' ', '') for t in found_tickets)
+                found_tickets = [normalize_ticket_id(ticket) for ticket in TICKET_ID_PATTERN.findall(section)]
+                tickets.update(found_tickets)
         else:
             # Fallback to general search if Appendix A/B with version is not explicitly matched
             pattern = rf"Appendix\s+[AB](.*?)(Appendix\s+[C-Z]|Build\s+Number:|$)"
@@ -54,9 +66,9 @@ class JiraValidator:
                 # Ensure the section actually mentions the latest version to avoid grabbing older tickets
                 if not re.search(rf"(?<!\d){version_pattern}(?!\d)", section):
                     continue
-                found_tickets = re.findall(r"\b([A-Za-z]{2,15}\s*-\s*\d+)\b", section)
-                tickets.update(t.upper().replace(' ', '') for t in found_tickets)
-
+                found_tickets = [normalize_ticket_id(ticket) for ticket in TICKET_ID_PATTERN.findall(section)]
+                tickets.update(found_tickets)
+        
         for t in tickets:
             result["tickets"].append({
                 "ticket": t,

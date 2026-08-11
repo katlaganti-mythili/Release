@@ -1,0 +1,86 @@
+# Release Validation Report
+
+## 1. File Summary
+- **File:** OpenGrid 2.3.15.0[0] Central Configuration Release Notes.pdf
+- **Detected Latest Version:** 2.3.15.0[0]
+- **Release Type:** PATCH
+
+## 2. Version Validation
+- **Latest Version Consistency:** PASS
+- **Details:** The latest version found in the document (2.3.15.0[0]) matches the expected latest version.
+
+## 3. Release Date Validation
+- **Status:** INVALID
+- **Result:** Found date: 04-28-2023 (Home Page date found: Jun-24-2026), expected date: 08-11-2026
+- **Details:** The extracted date is a previous date (previous).
+
+## 4. Jira Tickets (Latest Version)
+**Extracted SSC IDs (Latest Version from PDF):**
+- SSC ID found (2.3.15.0[0]): WAMAT-79643 [found in pdf]
+- SSC ID found (2.3.15.0[0]): WAMAT-79170 [found in pdf]
+- SSC ID found (2.3.15.0[0]): MNOSD-23587 [found in pdf]
+
+**Excel vs PDF Comparison (Under Jira Validation):**
+### Excel vs Release Notes Validation
+
+**Latest Build Number:** 2.3.15.0[0]
+
+**Duplicate SSC IDs:** None
+
+#### Full Comparison Table
+<table>
+<thead><tr><th>Application Name (Excel)</th><th>Application Name (PDF)</th><th>Account Name (Excel)</th><th>Account Name (PDF)</th><th>Client Tracking Number (Excel)</th><th>Client Tracking Number (PDF)</th><th>SSC ID (Excel)</th><th>SSC ID (PDF)</th><th>Issue Description (Excel)</th><th>Issue Description (PDF)</th><th>Functional Model (Excel)</th><th>Functional Model (PDF)</th><th>Status</th><th>Remarks</th></tr></thead>
+<tbody>
+<tr><td></td><td>Central Configuration</td><td></td><td></td><td></td><td>707370</td><td></td><td>MNOSD- 23587</td><td></td><td>Bug 707370: Unable to access existing standard crew record in CC GUI</td><td></td><td></td><td>Missing in Excel</td><td>Missing in Excel</td></tr>
+<tr><td></td><td>Central Configuration</td><td></td><td>Consolidated Edison Company of New York, Inc</td><td></td><td></td><td></td><td>WAMAT- 79643</td><td></td><td></td><td></td><td></td><td>Missing in Excel</td><td>Missing in Excel</td></tr>
+</tbody>
+</table>
+
+#### Mismatched Details (Missing/Failed Rows)
+<table>
+<thead><tr><th>SSC ID / Identifier</th><th>Status</th><th>Account Name (Excel)</th><th>Account Name (PDF)</th><th>Client Tracking Number (Excel)</th><th>Client Tracking Number (PDF)</th><th>SSC ID (Excel)</th><th>SSC ID (PDF)</th><th>Issue Description (Excel)</th><th>Issue Description (PDF)</th><th>Functional Model (Excel)</th><th>Functional Model (PDF)</th><th>Remarks</th></tr></thead>
+<tbody>
+<tr><td>MNOSD- 23587</td><td>Missing in Excel</td><td></td><td></td><td></td><td>707370</td><td></td><td>MNOSD- 23587</td><td></td><td>Bug 707370: Unable to access existing standard crew record in CC GUI</td><td></td><td></td><td>Missing in Excel</td></tr>
+<tr><td>WAMAT- 79643</td><td>Missing in Excel</td><td></td><td>Consolidated Edison Company of New York, Inc</td><td></td><td></td><td></td><td>WAMAT- 79643</td><td></td><td></td><td></td><td></td><td>Missing in Excel</td></tr>
+</tbody>
+</table>
+
+#### Column Check Summary
+| Column | Match Status |
+|--------|--------------|
+| Account Name | ✔ PASS |
+| Client Tracking Number | ✔ PASS |
+| SSC ID | ✔ PASS |
+| Issue Description | ✔ PASS |
+| Functional Model | ✔ PASS |
+
+#### Overall Result
+**FAILED**
+
+Reason: 2 row(s) missing in Excel.
+
+## 5. Table of Contents
+- **TOC Structure:** VALID (visual TOC)
+- **Navigation Correctness:** PASS
+- **Details:** Validated 5 TOC entries (visual TOC); 5 passed navigation check, 0 failed.
+
+**Per-Section Version & Date Validation:**
+
+| Section | Page | Navigation | Latest Version (2.3.15.0[0]) | Date(s) Found |
+|---------|------|------------|------------------------------------------------------|---------------|
+| Release Summary | 4 | PASS | Present | 06-24-2026 |
+| Release Change Summary | 5 | PASS | Present | 06-24-2026 |
+| Issue Summary | 7 | PASS | Present | - |
+| Appendix A | 8 | PASS | Present | 06-24-2026 |
+| Appendix B | 23 | PASS | Present | 06-24-2026 |
+
+
+## 6. Internal Document Links
+- **Total .pdf paths checked:** 2
+- **Successfully opened:** 2 | **Missing:** 0 | **Exists but failed to open:** 0
+
+*Note: Web browsers block direct links to local files for security. Please copy the paths and paste them into File Explorer.*
+
+**PDF links extracted from document:**
+- Path: `Documentation/Installation/OpenGrid 2.3.15.0 Central Configuration-Client Installation.pdf` | Status: ✅ Successfully opened
+- Path: `Documentation/Installation/OpenGrid 2.3.15.0 Central Configuration-Database Upgrade Guide.pdf` | Status: ✅ Successfully opened

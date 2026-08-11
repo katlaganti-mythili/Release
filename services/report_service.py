@@ -1,12 +1,27 @@
 import json
 import os
 import re
+import urllib.parse
 from datetime import datetime
 from agents.version_validator import VersionValidator
 from agents.validators.date_validator import DateValidator
 from services.ollama_service import OllamaService
 from services.jira_service import JiraService
+from agents.validators.jira_excel_validator import JiraExcelValidator
+from agents.validators.jira_validator import JiraValidator
 from utils.version_utils import extract_version_from_change_summary
+
+TICKET_ID_PATTERN = re.compile(
+    r"(?i)\b((?:MNOSD|WAMAT)\s*[-–—]\s*\d+(?:\s*[-–—]\s*\d+)*(?:[A-Z])?)(?:\s*(?:BUG|SWG))?\b"
+)
+
+
+def normalize_ticket_id(ticket: str) -> str:
+    if not ticket:
+        return ""
+    normalized = re.sub(r"\s+", "", str(ticket)).upper()
+    normalized = normalized.replace("–", "-").replace("—", "-")
+    return normalized
 
 MASTER_PROMPT = """# Release Validation Report
 
@@ -33,6 +48,7 @@ class ReportService:
         self.llm = OllamaService()
         self.jira_service = JiraService()
         self.version_validator = VersionValidator()
+        self.jira_excel_validator = JiraExcelValidator()
         self.date_validator = DateValidator()
 
     def _select_relevant_build_block(self, build_blocks: dict, latest_version: str):
@@ -55,12 +71,18 @@ class ReportService:
                 if key == "GLOBAL_APPENDIX_TICKETS":
                     continue
                 norm_key = re.sub(r"\[(\d+)\]", r".\1", key)
+                block_content = data.get("content", "")
                 
                 # Strictly match the header to avoid pulling in old releases that merely mention the new version
-                if has_ver(base_version, key) or has_ver(norm_base, norm_key):
+                if (
+                    has_ver(base_version, key)
+                    or has_ver(norm_base, norm_key)
+                    or has_ver(base_version, block_content)
+                    or has_ver(norm_base, block_content)
+                ):
                     merged_key.append(key)
                     merged_tickets.update(data.get("tickets", []))
-                    merged_content.append(data.get("content", ""))
+                    merged_content.append(block_content)
                     
             if merged_key:
                 global_data = build_blocks.get("GLOBAL_APPENDIX_TICKETS", {})
@@ -91,8 +113,10 @@ class ReportService:
             
             if is_appendix and parts[0].strip():
                 global_content_text += "\n" + parts[0].strip()
-                found_pre = re.findall(r'\b([A-Za-z]{2,15}\s*-\s*\d+)\b', parts[0])
-                global_tickets.update(t.upper().replace(' ', '') for t in found_pre)
+                # Extract Jira tickets anywhere in the block.
+                # Handles newlines, spaces, and PDF-specific dashes (–, —) between prefix and number.
+                found_pre = [normalize_ticket_id(ticket) for ticket in TICKET_ID_PATTERN.findall(parts[0])]
+                global_tickets.update(found_pre)
                 
             for part in parts[1:]:
                 clean_part = part.strip()
@@ -118,10 +142,10 @@ class ReportService:
                             header_lines.append(l.strip())
                     header = " ".join(header_lines)[:150]
                 
-                # Look for tickets in the entire block instead of just the content line
-                # Standard Jira tickets: 2-15 uppercase letters followed by optional spaces, hyphen and digits
-                found_tickets = re.findall(r'\b([A-Za-z]{2,15}\s*-\s*\d+)\b', clean_part)
-                tickets = [t.upper().replace(' ', '') for t in found_tickets]
+                # Look for Jira tickets anywhere in the block.
+                # Handles newlines, spaces, and PDF-specific dashes (–, —).
+                found_tickets = [normalize_ticket_id(ticket) for ticket in TICKET_ID_PATTERN.findall(clean_part)]
+                tickets = found_tickets
                 
                 if header not in results:
                     results[header] = {"tickets": set(), "content": ""}
@@ -136,6 +160,7 @@ class ReportService:
     def generate(self, state: dict, output_path="reports/validation_report.txt"):
         
         pdf_path = state.get("pdf_path", "Unknown")
+        excel_path = state.get("excel_path", "")
         text = state.get("text", "")
         system_determined_latest_version = state.get("system_determined_latest_version", "Unknown")
         toc_validation = state.get("toc_validation", {})
@@ -148,7 +173,13 @@ class ReportService:
         
         # Check PDF links status to pass to LLM for final summary calculation
         pdf_checks = state.get("pdf_validation", [])
-        pdf_missing = sum(1 for p in pdf_checks if not p.get("readable") and p.get("status") != "PASS")
+        # Compute consistent counters up front so summary and details use the same semantics
+        total_paths = len(pdf_checks)
+        readable_count = sum(1 for p in pdf_checks if p.get("readable") or p.get("status") == "PASS")
+        not_found_count = sum(1 for p in pdf_checks if not p.get("exists"))
+        unreadable_count = sum(1 for p in pdf_checks if p.get("exists") and not (p.get("readable") or p.get("status") == "PASS"))
+        # Missing means either not found or exists-but-unreadable
+        pdf_missing = not_found_count + unreadable_count
         pdf_links_status = "FAIL (Contains broken or missing links)" if pdf_missing > 0 else "PASS"
         
         # Determine Version, Date, Jira Tickets, Release Type, and TOC status Deterministically
@@ -179,6 +210,26 @@ class ReportService:
         if selected_block_key and selected_block:
             latest_block_content = selected_block.get("content", "").lower()
             matching_block = selected_block.get("tickets", [])
+
+        # Primary source: extract SSC IDs strictly from the latest-version section.
+        # This avoids pulling IDs from older versions while covering multi-page continuations.
+        latest_only_tickets = []
+        try:
+            jira_latest = JiraValidator().validate_latest_release_tickets(text, system_determined_latest_version)
+            latest_only_tickets = [normalize_ticket_id(t.get("ticket", "")) for t in jira_latest.get("tickets", []) if t.get("ticket")]
+        except Exception:
+            latest_only_tickets = []
+
+        # Fallback to block selection only when latest-section extraction is empty.
+        source_tickets = latest_only_tickets if latest_only_tickets else matching_block
+        deduped_tickets = []
+        seen_tickets = set()
+        for t in source_tickets:
+            nt = normalize_ticket_id(t)
+            if nt and nt not in seen_tickets:
+                seen_tickets.add(nt)
+                deduped_tickets.append(nt)
+        matching_block = deduped_tickets
 
         # Include intro page text to find the release date mentioned in the summary or intro page
         intro_text = text[:3000] if text else ""
@@ -279,14 +330,15 @@ class ReportService:
 
         if matching_block:
             jira_lines = []
-            print(f"Validating {len(matching_block)} extracted Jira tickets against live Jira board...")
+            print(f"Validating {len(matching_block)} extracted SSC IDs against live Jira board...")
             
             import concurrent.futures
             
             def check_ticket(t):
-                is_valid = self.jira_service.ticket_exists(t)
+                is_valid, error_msg = self.jira_service.ticket_exists(t)
                 status = "[Verified in Jira]" if is_valid else "[found in pdf]"
-                return f"- jira ticket found ({system_determined_latest_version}): {t} {status}"
+                
+                return f"- SSC ID found ({system_determined_latest_version}): {t} {status}"
             
             with concurrent.futures.ThreadPoolExecutor(max_workers=25) as executor:
                 results = list(executor.map(check_ticket, matching_block))
@@ -294,7 +346,38 @@ class ReportService:
             jira_lines.extend(results)
             jira_tickets_str = "\n".join(jira_lines)
         else:
-            jira_tickets_str = "jira ticket not found in pdf"
+            jira_tickets_str = "SSC IDs not found in latest version section of PDF"
+
+        jira_tickets_str = f"**Extracted SSC IDs (Latest Version from PDF):**\n{jira_tickets_str}"
+
+        # Run Excel-vs-PDF Jira comparison inline under Jira validation (no separate validation stage).
+        excel_path_used = state.get("excel_path") or os.environ.get("APP_EXCEL_PATH", "")
+        excel_val_results = state.get("excel_validation")
+
+        # If excel_validation was not provided by the node but excel_path_used exists, fallback to calculate
+        if not excel_val_results and excel_path_used:
+            if not os.path.isabs(excel_path_used) and pdf_path and pdf_path != "Unknown":
+                base_dir = os.path.dirname(os.path.abspath(pdf_path))
+                excel_path_used = os.path.normpath(os.path.join(base_dir, excel_path_used))
+
+            if os.path.exists(excel_path_used):
+                excel_val_results = self.jira_excel_validator.validate(
+                    pdf_path,
+                    excel_path_used,
+                    matching_block=matching_block,
+                    app_name_hint=os.path.basename(pdf_path),
+                )
+
+        if excel_val_results and "error" not in excel_val_results:
+            excel_report = self.jira_excel_validator.format_report(excel_val_results, system_determined_latest_version)
+            jira_tickets_str += f"\n\n**Excel vs PDF Comparison (Under Jira Validation):**\n{excel_report}"
+        elif excel_val_results and "error" in excel_val_results:
+            shown_path = excel_path_used or "None"
+            error_msg = excel_val_results["error"]
+            jira_tickets_str += f"\n\n**Excel vs PDF Comparison (Under Jira Validation):**\n### Excel vs Release Notes Validation\n*Excel comparison was skipped: {error_msg}*"
+        else:
+            shown_path = excel_path_used or "None"
+            jira_tickets_str += f"\n\n**Excel vs PDF Comparison (Under Jira Validation):**\n### Excel vs Release Notes Validation\n*Excel comparison was skipped because no valid Excel path was provided. (Path provided: {shown_path})*"
 
         formatted_prompt = MASTER_PROMPT.format(
             source_pdf_file_name=os.path.basename(pdf_path),
@@ -317,20 +400,33 @@ class ReportService:
         if not pdf_checks:
             pdf_links_section += "No internal PDF links found.\n"
         else:
-            total_paths = len(pdf_checks)
-            valid_paths = sum(1 for p in pdf_checks if p.get("readable") or p.get("status") == "PASS")
-            missing_paths = sum(1 for p in pdf_checks if not p.get("exists"))
-            invalid_format = 0  # Assuming all passed to validate were .pdf since we filtered earlier
-            
             pdf_links_section += f"- **Total .pdf paths checked:** {total_paths}\n"
-            pdf_links_section += f"- **Valid .pdf paths:** {valid_paths} | **Missing .pdf paths:** {missing_paths} | **Invalid format:** {invalid_format} | **Pdfs able to open:** {valid_paths}\n\n"
+            pdf_links_section += f"- **Successfully opened:** {readable_count} | **Missing:** {not_found_count} | **Exists but failed to open:** {unreadable_count}\n\n"
+            pdf_links_section += "*Note: Web browsers block direct links to local files for security. Please copy the paths and paste them into File Explorer.*\n\n"
             pdf_links_section += "**PDF links extracted from document:**\n"
             
             for check in pdf_checks:
-                status_str = "opened" if check.get("readable") or check.get("status") == "PASS" else "not opened"
-                # Output raw path without backticks to make it easier to copy-paste cleanly in Windows
-                display_path = check.get('original_link', check.get('file_path'))
-                pdf_links_section += f"- Path: {display_path} | Status: {status_str}\n"
+                if check.get("readable") or check.get("status") == "PASS":
+                    status_str = "✅ Successfully opened"
+                elif not check.get("exists"):
+                    http_status = check.get("http_status")
+                    if http_status:
+                        status_str = f"❌ HTTP Error {http_status}"
+                    else:
+                        status_str = "❌ File not found"
+                else:
+                    status_str = f"⚠️ Failed to open (Error: {check.get('error', 'Corrupted or unreadable')})"
+                    
+                display_path = check.get('raw_text', check.get('original_link', check.get('file_path')))
+                resolved_path = check.get('file_path', display_path)
+                
+                # We no longer unquote display_path because we want it EXACTLY as it was in the PDF
+                
+                if isinstance(resolved_path, str) and resolved_path.lower().startswith(('http://', 'https://', 'mailto:')):
+                    pdf_links_section += f"- Path: <a href=\"{resolved_path}\" target=\"_blank\">{display_path}</a> | Status: {status_str}\n"
+                else:
+                    # Render as an easy-to-copy code block since browsers block file:// execution
+                    pdf_links_section += f"- Path: `{display_path}` | Status: {status_str}\n"
 
         report_text += "\n" + pdf_links_section
         

@@ -1,0 +1,78 @@
+# Release Validation Report
+
+## 1. File Summary
+- **File:** OpenGrid 2.3.15.1.0 Field Manager Release Notes.pdf
+- **Detected Latest Version:** 2.3.15.1[0]
+- **Release Type:** HOTFIX
+
+## 2. Version Validation
+- **Latest Version Consistency:** PASS
+- **Details:** The latest version found in the document (2.3.15.1[0]) matches the expected latest version.
+
+## 3. Release Date Validation
+- **Status:** INVALID
+- **Result:** Found date: 10-13-2023 (Home Page date found: Jul-24-2026), expected date: 08-11-2026
+- **Details:** The extracted date is a previous date (previous).
+
+## 4. Jira Tickets (Latest Version)
+**Extracted SSC IDs (Latest Version from PDF):**
+- SSC ID found (2.3.15.1[0]): MNOSD-28110 [found in pdf]
+
+**Excel vs PDF Comparison (Under Jira Validation):**
+### Excel vs Release Notes Validation
+
+**Latest Build Number:** 2.3.15.1[0]
+
+**Duplicate SSC IDs:** None
+
+#### Full Comparison Table
+<table>
+<thead><tr><th>Application Name (Excel)</th><th>Application Name (PDF)</th><th>Account Name (Excel)</th><th>Account Name (PDF)</th><th>Client Tracking Number (Excel)</th><th>Client Tracking Number (PDF)</th><th>SSC ID (Excel)</th><th>SSC ID (PDF)</th><th>Issue Description (Excel)</th><th>Issue Description (PDF)</th><th>Functional Model (Excel)</th><th>Functional Model (PDF)</th><th>Status</th><th>Remarks</th></tr></thead>
+<tbody>
+<tr><td>Field Manager 2.3.15.1[0]</td><td>Field Manager</td><td>Southwest Gas Corporation</td><td>Southwest Gas Corporation</td><td>ALM 38</td><td>ALM 38</td><td>MNOSD-28110</td><td>MNOSD-28110</td><td>SWG WM - Special char in attachment file name error</td><td>SWG WM - Special char in attachment file name error</td><td></td><td>N</td><td>PASS</td><td>Matched</td></tr>
+</tbody>
+</table>
+
+#### Mismatched Details
+No mismatches found.
+
+#### Column Check Summary
+| Column | Match Status |
+|--------|--------------|
+| Account Name | ✔ PASS |
+| Client Tracking Number | ✔ PASS |
+| SSC ID | ✔ PASS |
+| Issue Description | ✔ PASS |
+| Functional Model | ✔ PASS |
+
+#### Overall Result
+**PASSED**
+
+## 5. Table of Contents
+- **TOC Structure:** VALID (visual TOC)
+- **Navigation Correctness:** PASS
+- **Details:** Validated 5 TOC entries (visual TOC); 5 passed navigation check, 0 failed.
+
+**Per-Section Version & Date Validation:**
+
+| Section | Page | Navigation | Latest Version (2.3.15.1[0]) | Date(s) Found |
+|---------|------|------------|------------------------------------------------------|---------------|
+| Release Summary | 4 | PASS | Present | 07-24-2026 |
+| Release Change Summary | 5 | PASS | Present | 07-24-2026 |
+| Issue Summary | 6 | PASS | Present | - |
+| Appendix A | 7 | PASS | Present | 07-24-2026 |
+| Appendix B | 19 | PASS | Present | 07-24-2026 |
+
+
+## 6. Internal Document Links
+- **Total .pdf paths checked:** 5
+- **Successfully opened:** 5 | **Missing:** 0 | **Exists but failed to open:** 0
+
+*Note: Web browsers block direct links to local files for security. Please copy the paths and paste them into File Explorer.*
+
+**PDF links extracted from document:**
+- Path: `Documentation/OpenGrid 2.3.15.1 Field Manager_Database Upgrade Guide.pdf` | Status: ✅ Successfully opened
+- Path: `Documentation/Installation/OpenGrid 2.3.15 MSS-WLS Installation.pdf` | Status: ✅ Successfully opened
+- Path: `Documentation/Installation/OpenGrid 2.3.15 Field Manager_Server Components Installation.pdf` | Status: ✅ Successfully opened
+- Path: `Documentation/Installation/OpenGrid 2.3.15 Field Manager_Client Installation.pdf` | Status: ✅ Successfully opened
+- Path: `Documentation/Installation/OpenGrid 2.3.15 MSS-WAS Installation.pdf` | Status: ✅ Successfully opened
