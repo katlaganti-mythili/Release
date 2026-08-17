@@ -1,0 +1,46 @@
+# Release Validation Report
+
+## 1. File Summary
+- **File:** tmp1q3cu8kf.pdf
+- **Detected Latest Version:** 2.3.10.7.1
+- **Release Type:** MINOR/MAJOR
+
+## 2. Version Validation & Change Summary
+- **Latest Version Consistency:** PASS
+- **Details:** The latest version found in the document (2.3.10.7.1) matches the expected latest version.
+- **Change Summary Latest Version Entry:** CORRECT (2.3.10.7.1)
+- **Change Summary Date Match:** NO (Does the date in the Change Summary exactly match 06-22-2026?)
+
+## 3. Release Date Validation
+- **Status:** INVALID
+- **Result:** Found date: 05-22-2026 (Home Page date found: May-22-2026), expected date: 06-22-2026
+- **Details:** The extracted date is a previous date (previous).
+
+## 4. Jira Tickets (Latest Version)
+jira ticket not found in pdf
+
+## 5. Table of Contents
+- **TOC Structure:** VALID (visual TOC)
+- **Navigation Correctness:** PASS
+- **Details:** Validated 5 TOC entries (visual TOC); 5 passed navigation check, 0 failed.
+
+**Per-Section Version & Date Validation:**
+
+| Section | Page | Navigation | Latest Version (2.3.10.7.1) | Date(s) Found |
+|---------|------|------------|------------------------------------------------------|---------------|
+| Release Summary | 4 | PASS | Present | 05-22-2026 |
+| Release Change Summary | 5 | PASS | Present | 05-22-2026 |
+| Issue Summary | 8 | PASS | Present | - |
+| Appendix A | 9 | PASS | Present | 05-22-2026 |
+| Appendix B | 22 | PASS | Present | 05-22-2026 |
+
+
+## 6. Internal Document Links
+- **Total .pdf paths checked:** 4
+- **Valid .pdf paths:** 0 | **Missing .pdf paths:** 4 | **Invalid format:** 0 | **Pdfs able to open:** 0
+
+**PDF links after adding root path:**
+- Path: C:\Users\KATLAG~1.MYT\AppData\Local\Temp\Documentation\Installation\ARM 2.3.7.0 WLS Web Middleware Applications Installation.pdf | Status: not opened
+- Path: C:\Users\KATLAG~1.MYT\AppData\Local\Temp\Documentation\Installation\ARM 2.3.7.0 WAS Web Middleware Applications Installation.pdf | Status: not opened
+- Path: C:\Users\KATLAG~1.MYT\AppData\Local\Temp\Documentation\Installation\ARM 2.3.2.0 ARM Logging setup.pdf | Status: not opened
+- Path: C:\Users\KATLAG~1.MYT\AppData\Local\Temp\Documentation\Installation\ARM_ADFS_Configuration_Details.pdf | Status: not opened

@@ -1,0 +1,8 @@
+pymupdf
+pdfplumber
+pandas
+openpyxl
+requests
+python-dotenv
+streamlit
+langgraph
