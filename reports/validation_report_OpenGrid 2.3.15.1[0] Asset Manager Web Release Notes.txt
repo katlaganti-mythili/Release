@@ -11,16 +11,16 @@
 
 ## 3. Release Date Validation
 - **Status:** INVALID
-- **Result:** Found date: 12-11-2020 (Home Page date found: Jul-24-2026), expected date: 08-11-2026
+- **Result:** Found date: 12-11-2020 (Home Page date found: Jul-24-2026), expected date: 08-18-2026
 - **Details:** The extracted date is a previous date (previous).
 
 ## 4. Jira Tickets (Latest Version)
 **Extracted SSC IDs (Latest Version from PDF):**
-- SSC ID found (2.3.15.1[0]): MNOSD-28764 [found in pdf]
-- SSC ID found (2.3.15.1[0]): MNOSD-29064 [found in pdf]
 - SSC ID found (2.3.15.1[0]): MNOSD-28658 [found in pdf]
 - SSC ID found (2.3.15.1[0]): MNOSD-29435 [found in pdf]
+- SSC ID found (2.3.15.1[0]): MNOSD-28764 [found in pdf]
 - SSC ID found (2.3.15.1[0]): MNOSD-28810 [found in pdf]
+- SSC ID found (2.3.15.1[0]): MNOSD-29064 [found in pdf]
 
 **Excel vs PDF Comparison (Under Jira Validation):**
 ### Excel vs Release Notes Validation
@@ -49,6 +49,6 @@
 *Note: Web browsers block direct links to local files for security. Please copy the paths and paste them into File Explorer.*
 
 **PDF links extracted from document:**
-- Path: `Documentation/Installation/ARM 2.3.2.0 ARM Logging setup.pdf` | Status: ✅ Successfully opened
 - Path: `Documentation/Installation/ARM 2.3.7.0 WLS Web Middleware Applications Installation.pdf` | Status: ✅ Successfully opened
+- Path: `Documentation/Installation/ARM 2.3.2.0 ARM Logging setup.pdf` | Status: ✅ Successfully opened
 - Path: `Documentation/Installation/ARM 2.3.7.0 WAS Web Middleware Applications Installation.pdf` | Status: ✅ Successfully opened

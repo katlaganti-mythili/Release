@@ -11,7 +11,7 @@
 
 ## 3. Release Date Validation
 - **Status:** INVALID
-- **Result:** Found date: 04-28-2023 (Home Page date found: Jul-24-2026), expected date: 08-11-2026
+- **Result:** Found date: 04-28-2023 (Home Page date found: Jul-24-2026), expected date: 08-18-2026
 - **Details:** The extracted date is a previous date (previous).
 
 ## 4. Jira Tickets (Latest Version)
@@ -29,12 +29,22 @@
 <table>
 <thead><tr><th>Application Name (Excel)</th><th>Application Name (PDF)</th><th>Account Name (Excel)</th><th>Account Name (PDF)</th><th>Client Tracking Number (Excel)</th><th>Client Tracking Number (PDF)</th><th>SSC ID (Excel)</th><th>SSC ID (PDF)</th><th>Issue Description (Excel)</th><th>Issue Description (PDF)</th><th>Functional Model (Excel)</th><th>Functional Model (PDF)</th><th>Status</th><th>Remarks</th></tr></thead>
 <tbody>
-<tr><td>Data Manager 2.3.15.1[0]</td><td>Data Manager</td><td>CGI Internal</td><td>CGI Internal</td><td></td><td></td><td>WAMAT-80848</td><td>WAMAT- 80848</td><td>FF-&gt;TBD - ADM-System demo feedback : Suggestion to change label in CC for WC attachment checkbox</td><td>FF-&gt;TBD - ADM-System demo feedback : Suggestion to change label in CC for WC attachment checkbox</td><td></td><td>Y</td><td>PASS</td><td>Matched</td></tr>
+<tr><td>Data Manager 2.3.15.1[0]</td><td>Data Manager</td><td>CGI Internal</td><td>CGI Internal</td><td></td><td></td><td>WAMAT-80848</td><td>WAMAT- 80848</td><td>FF-&gt;TBD - ADM-System demo feedback : Suggestion to change label in CC for WC attachment checkbox</td><td>FF-&gt;TBD - ADM-System demo feedback : Suggestion to change label in CC for WC attachment checkbox</td><td></td><td>Y</td><td>FAIL</td><td>Functional Model mismatch</td></tr>
 </tbody>
 </table>
 
-#### Mismatched Details
-No mismatches found.
+#### Field-Level Mismatches
+| SSC ID / Identifier | Field | Excel Value | PDF Value | Status |
+|---|---|---|---|---|
+| WAMAT-80848 | Functional Model |  | Y | ❌ FAILED |
+
+#### Mismatched Details (Missing/Failed Rows)
+<table>
+<thead><tr><th>SSC ID / Identifier</th><th>Status</th><th>Account Name (Excel)</th><th>Account Name (PDF)</th><th>Client Tracking Number (Excel)</th><th>Client Tracking Number (PDF)</th><th>SSC ID (Excel)</th><th>SSC ID (PDF)</th><th>Issue Description (Excel)</th><th>Issue Description (PDF)</th><th>Functional Model (Excel)</th><th>Functional Model (PDF)</th><th>Remarks</th></tr></thead>
+<tbody>
+<tr><td>WAMAT-80848</td><td>FAIL</td><td>CGI Internal</td><td>CGI Internal</td><td></td><td></td><td>WAMAT-80848</td><td>WAMAT- 80848</td><td>FF-&gt;TBD - ADM-System demo feedback : Suggestion to change label in CC for WC attachment checkbox</td><td>FF-&gt;TBD - ADM-System demo feedback : Suggestion to change label in CC for WC attachment checkbox</td><td></td><td>Y</td><td>Functional Model mismatch</td></tr>
+</tbody>
+</table>
 
 #### Column Check Summary
 | Column | Match Status |
@@ -43,10 +53,12 @@ No mismatches found.
 | Client Tracking Number | ✔ PASS |
 | SSC ID | ✔ PASS |
 | Issue Description | ✔ PASS |
-| Functional Model | ✔ PASS |
+| Functional Model | ✖ FAIL |
 
 #### Overall Result
-**PASSED**
+**FAILED**
+
+Reason: 1 row(s) contain mismatched data.
 
 ## 5. Table of Contents
 - **TOC Structure:** VALID (visual TOC)
@@ -72,7 +84,7 @@ No mismatches found.
 
 **PDF links extracted from document:**
 - Path: `///162.70.125.120/InternalBuilds/OpenGrid_2.3.11/P01/DataManager/ADM2.3.11.1[0]/ReadMe.pdf` | Status: ❌ File not found
+- Path: `documentation/Installation/OpenGrid 2.3.15.1 Data Manager-WAS Installation.pdf` | Status: ✅ Successfully opened
 - Path: `documentation/Installation/OpenGrid 2.3.15.1 Database Upgrade Guide.pdf` | Status: ✅ Successfully opened
 - Path: `documentation/Installation/OpenGrid 2.3.15.1 Data Manager-CLI Installation Guide.pdf` | Status: ✅ Successfully opened
 - Path: `documentation/Installation/OpenGrid 2.3.15.1 Data Manager-WLS Installation.pdf` | Status: ✅ Successfully opened
-- Path: `documentation/Installation/OpenGrid 2.3.15.1 Data Manager-WAS Installation.pdf` | Status: ✅ Successfully opened

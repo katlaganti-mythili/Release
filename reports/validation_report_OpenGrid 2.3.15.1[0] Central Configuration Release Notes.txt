@@ -11,17 +11,17 @@
 
 ## 3. Release Date Validation
 - **Status:** INVALID
-- **Result:** Found date: 04-28-2023 (Home Page date found: Jul-24-2026), expected date: 08-11-2026
+- **Result:** Found date: 04-28-2023 (Home Page date found: Jul-24-2026), expected date: 08-18-2026
 - **Details:** The extracted date is a previous date (previous).
 
 ## 4. Jira Tickets (Latest Version)
 **Extracted SSC IDs (Latest Version from PDF):**
-- SSC ID found (2.3.15.1[0]): WAMAT-80849 [found in pdf]
-- SSC ID found (2.3.15.1[0]): MNOSD-27417 [found in pdf]
-- SSC ID found (2.3.15.1[0]): WAMAT-80201 [found in pdf]
 - SSC ID found (2.3.15.1[0]): MNOSD-29237 [found in pdf]
-- SSC ID found (2.3.15.1[0]): MNOSD-29359 [found in pdf]
+- SSC ID found (2.3.15.1[0]): MNOSD-27417 [found in pdf]
 - SSC ID found (2.3.15.1[0]): MNOSD-28810 [found in pdf]
+- SSC ID found (2.3.15.1[0]): MNOSD-29359 [found in pdf]
+- SSC ID found (2.3.15.1[0]): WAMAT-80849 [found in pdf]
+- SSC ID found (2.3.15.1[0]): WAMAT-80201 [found in pdf]
 
 **Excel vs PDF Comparison (Under Jira Validation):**
 ### Excel vs Release Notes Validation
@@ -34,42 +34,55 @@
 <table>
 <thead><tr><th>Application Name (Excel)</th><th>Application Name (PDF)</th><th>Account Name (Excel)</th><th>Account Name (PDF)</th><th>Client Tracking Number (Excel)</th><th>Client Tracking Number (PDF)</th><th>SSC ID (Excel)</th><th>SSC ID (PDF)</th><th>Issue Description (Excel)</th><th>Issue Description (PDF)</th><th>Functional Model (Excel)</th><th>Functional Model (PDF)</th><th>Status</th><th>Remarks</th></tr></thead>
 <tbody>
-<tr><td>Central Configuration 2.3.15.1[0]</td><td>Central Configuration</td><td>CGI Internal</td><td>CGI Internal</td><td></td><td></td><td>WAMAT-80849</td><td>WAMAT- 80849</td><td>FFOG2.3.14.4 -&gt;2.3.15.1- System demo feedback : Suggestion to change label in CC for WC attachment checkbox</td><td></td><td></td><td></td><td>PASS</td><td>Matched</td></tr>
-<tr><td>Central Configuration 2.3.15.1[0]</td><td>Central Configuration</td><td>Consolidated Edison (Gas) Company of New York</td><td></td><td>1343980</td><td>1343980</td><td>MNOSD-29237</td><td>MNOSD- 29237</td><td>Bug 1343980: Can&#x27;t add steps through the query into a step group</td><td>Bug 1343980: Can&#x27;t add steps through the query into a step group</td><td></td><td></td><td>PASS</td><td>Matched</td></tr>
-<tr><td>Central Configuration 2.3.15.1[0]</td><td>Central Configuration</td><td>Consolidated Edison Company of New York, Inc</td><td>Consolidated Edison Company of New York, Inc</td><td>ADO 1341189</td><td>ADO 1341189</td><td>WAMAT-80201</td><td>WAMAT- 80201</td><td>FFOG2.3.10.0.11 -&gt;Master - ADO 1341189 - PRD OGF 6.8.5.14.3 - Crew unable to log in due to incorrect deployment plan</td><td></td><td></td><td></td><td>PASS</td><td>Matched</td></tr>
-<tr><td>Central Configuration 2.3.15.1[0]</td><td>Central Configuration</td><td>Southwest Gas Corporation</td><td>Southwest Gas Corporation</td><td>ALM 3796</td><td>ALM 3796</td><td>MNOSD-27417</td><td>MNOSD- 27417</td><td>SWG_WM | Assignment ID is null for Components added in Mobile:</td><td></td><td></td><td></td><td>PASS</td><td>Matched</td></tr>
-<tr><td>Central Configuration 2.3.15.1[0]</td><td>Central Configuration</td><td>Rhode Island Energy</td><td>Rhode Island Energy</td><td>RIE</td><td>RIE</td><td>MNOSD-29359</td><td></td><td>&quot;In&quot; operator does not work while setting up Rules Criteria</td><td>Epic for RIE - Gas New Business functionality into WAM</td><td></td><td></td><td>FAIL</td><td>Issue Description mismatch; Unmapped Row Pair (Force Joined)</td></tr>
-<tr><td>Central Configuration 2.3.15.1[0]</td><td>Central Configuration</td><td>CGI Internal</td><td></td><td></td><td></td><td>MNOSD-28810</td><td></td><td>Unable to configure the screen layout for Conditions</td><td></td><td></td><td>Updated</td><td>FAIL</td><td>Unmapped Row Pair (Force Joined)</td></tr>
+<tr><td>Central Configuration 2.3.15.1[0]</td><td>Central Configuration</td><td>CGI Internal</td><td>CGI Internal</td><td></td><td></td><td>WAMAT-80849</td><td>WAMAT- 80849</td><td>FFOG2.3.14.4 -&gt;2.3.15.1- System demo feedback : Suggestion to change label in CC for WC attachment checkbox</td><td></td><td></td><td></td><td>FAIL</td><td>Issue Description mismatch</td></tr>
+<tr><td>Central Configuration 2.3.15.1[0]</td><td>Central Configuration</td><td>Consolidated Edison (Gas) Company of New York</td><td></td><td>1343980</td><td>1343980</td><td>MNOSD-29237</td><td>MNOSD- 29237</td><td>Bug 1343980: Can&#x27;t add steps through the query into a step group</td><td>Bug 1343980: Can&#x27;t add steps through the query into a step group</td><td></td><td></td><td>FAIL</td><td>Account Name mismatch (Excel: &#x27;Consolidated Edison (Gas) Company of New York&#x27; vs PDF: &#x27;&#x27;)</td></tr>
+<tr><td>Central Configuration 2.3.15.1[0]</td><td>Central Configuration</td><td>Consolidated Edison Company of New York, Inc</td><td>Consolidated Edison Company of New York, Inc</td><td>ADO 1341189</td><td>ADO 1341189</td><td>WAMAT-80201</td><td>WAMAT- 80201</td><td>FFOG2.3.10.0.11 -&gt;Master - ADO 1341189 - PRD OGF 6.8.5.14.3 - Crew unable to log in due to incorrect deployment plan</td><td></td><td></td><td></td><td>FAIL</td><td>Issue Description mismatch</td></tr>
+<tr><td>Central Configuration 2.3.15.1[0]</td><td>Central Configuration</td><td>Southwest Gas Corporation</td><td>Southwest Gas Corporation</td><td>ALM 3796</td><td>ALM 3796</td><td>MNOSD-27417</td><td>MNOSD- 27417</td><td>SWG_WM | Assignment ID is null for Components added in Mobile:</td><td></td><td></td><td></td><td>FAIL</td><td>Issue Description mismatch</td></tr>
+<tr><td>Central Configuration 2.3.15.1[0]</td><td>Central Configuration</td><td>Rhode Island Energy</td><td>Rhode Island Energy</td><td>RIE</td><td>RIE</td><td>MNOSD-29359</td><td></td><td>&quot;In&quot; operator does not work while setting up Rules Criteria</td><td>Epic for RIE - Gas New Business functionality into WAM</td><td></td><td></td><td>FAIL</td><td>SSC ID mismatch (Excel: &#x27;MNOSD-29359&#x27; vs PDF: &#x27;&#x27;); Issue Description mismatch; Unmapped Row Pair (Force Joined)</td></tr>
+<tr><td>Central Configuration 2.3.15.1[0]</td><td>Central Configuration</td><td>CGI Internal</td><td></td><td></td><td></td><td>MNOSD-28810</td><td></td><td>Unable to configure the screen layout for Conditions</td><td></td><td></td><td>Updated</td><td>FAIL</td><td>Account Name mismatch (Excel: &#x27;CGI Internal&#x27; vs PDF: &#x27;&#x27;); SSC ID mismatch (Excel: &#x27;MNOSD-28810&#x27; vs PDF: &#x27;&#x27;); Issue Description mismatch; Functional Model mismatch; Unmapped Row Pair (Force Joined)</td></tr>
 </tbody>
 </table>
 
 #### Field-Level Mismatches
 | SSC ID / Identifier | Field | Excel Value | PDF Value | Status |
 |---|---|---|---|---|
+| WAMAT-80849 | Issue Description | FFOG2.3.14.4 ->2.3.15.1- System demo feedback : Suggestion to change label in CC for WC attachment checkbox |  | ❌ FAILED |
+| MNOSD-29237 | Account Name | Consolidated Edison (Gas) Company of New York |  | ❌ FAILED |
+| WAMAT-80201 | Issue Description | FFOG2.3.10.0.11 ->Master - ADO 1341189 - PRD OGF 6.8.5.14.3 - Crew unable to log in due to incorrect deployment plan |  | ❌ FAILED |
+| MNOSD-27417 | Issue Description | SWG_WM | Assignment ID is null for Components added in Mobile: |  | ❌ FAILED |
+| MNOSD-29359 | SSC ID | MNOSD-29359 |  | ❌ FAILED |
 | MNOSD-29359 | Issue Description | "In" operator does not work while setting up Rules Criteria | Epic for RIE - Gas New Business functionality into WAM | ❌ FAILED |
+| MNOSD-28810 | Account Name | CGI Internal |  | ❌ FAILED |
+| MNOSD-28810 | SSC ID | MNOSD-28810 |  | ❌ FAILED |
+| MNOSD-28810 | Issue Description | Unable to configure the screen layout for Conditions |  | ❌ FAILED |
+| MNOSD-28810 | Functional Model |  | Updated | ❌ FAILED |
 
 #### Mismatched Details (Missing/Failed Rows)
 <table>
 <thead><tr><th>SSC ID / Identifier</th><th>Status</th><th>Account Name (Excel)</th><th>Account Name (PDF)</th><th>Client Tracking Number (Excel)</th><th>Client Tracking Number (PDF)</th><th>SSC ID (Excel)</th><th>SSC ID (PDF)</th><th>Issue Description (Excel)</th><th>Issue Description (PDF)</th><th>Functional Model (Excel)</th><th>Functional Model (PDF)</th><th>Remarks</th></tr></thead>
 <tbody>
-<tr><td>MNOSD-29359</td><td>FAIL</td><td>Rhode Island Energy</td><td>Rhode Island Energy</td><td>RIE</td><td>RIE</td><td>MNOSD-29359</td><td></td><td>&quot;In&quot; operator does not work while setting up Rules Criteria</td><td>Epic for RIE - Gas New Business functionality into WAM</td><td></td><td></td><td>Issue Description mismatch; Unmapped Row Pair (Force Joined)</td></tr>
-<tr><td>MNOSD-28810</td><td>FAIL</td><td>CGI Internal</td><td></td><td></td><td></td><td>MNOSD-28810</td><td></td><td>Unable to configure the screen layout for Conditions</td><td></td><td></td><td>Updated</td><td>Unmapped Row Pair (Force Joined)</td></tr>
+<tr><td>WAMAT-80849</td><td>FAIL</td><td>CGI Internal</td><td>CGI Internal</td><td></td><td></td><td>WAMAT-80849</td><td>WAMAT- 80849</td><td>FFOG2.3.14.4 -&gt;2.3.15.1- System demo feedback : Suggestion to change label in CC for WC attachment checkbox</td><td></td><td></td><td></td><td>Issue Description mismatch</td></tr>
+<tr><td>MNOSD-29237</td><td>FAIL</td><td>Consolidated Edison (Gas) Company of New York</td><td></td><td>1343980</td><td>1343980</td><td>MNOSD-29237</td><td>MNOSD- 29237</td><td>Bug 1343980: Can&#x27;t add steps through the query into a step group</td><td>Bug 1343980: Can&#x27;t add steps through the query into a step group</td><td></td><td></td><td>Account Name mismatch (Excel: &#x27;Consolidated Edison (Gas) Company of New York&#x27; vs PDF: &#x27;&#x27;)</td></tr>
+<tr><td>WAMAT-80201</td><td>FAIL</td><td>Consolidated Edison Company of New York, Inc</td><td>Consolidated Edison Company of New York, Inc</td><td>ADO 1341189</td><td>ADO 1341189</td><td>WAMAT-80201</td><td>WAMAT- 80201</td><td>FFOG2.3.10.0.11 -&gt;Master - ADO 1341189 - PRD OGF 6.8.5.14.3 - Crew unable to log in due to incorrect deployment plan</td><td></td><td></td><td></td><td>Issue Description mismatch</td></tr>
+<tr><td>MNOSD-27417</td><td>FAIL</td><td>Southwest Gas Corporation</td><td>Southwest Gas Corporation</td><td>ALM 3796</td><td>ALM 3796</td><td>MNOSD-27417</td><td>MNOSD- 27417</td><td>SWG_WM | Assignment ID is null for Components added in Mobile:</td><td></td><td></td><td></td><td>Issue Description mismatch</td></tr>
+<tr><td>MNOSD-29359</td><td>FAIL</td><td>Rhode Island Energy</td><td>Rhode Island Energy</td><td>RIE</td><td>RIE</td><td>MNOSD-29359</td><td></td><td>&quot;In&quot; operator does not work while setting up Rules Criteria</td><td>Epic for RIE - Gas New Business functionality into WAM</td><td></td><td></td><td>SSC ID mismatch (Excel: &#x27;MNOSD-29359&#x27; vs PDF: &#x27;&#x27;); Issue Description mismatch; Unmapped Row Pair (Force Joined)</td></tr>
+<tr><td>MNOSD-28810</td><td>FAIL</td><td>CGI Internal</td><td></td><td></td><td></td><td>MNOSD-28810</td><td></td><td>Unable to configure the screen layout for Conditions</td><td></td><td></td><td>Updated</td><td>Account Name mismatch (Excel: &#x27;CGI Internal&#x27; vs PDF: &#x27;&#x27;); SSC ID mismatch (Excel: &#x27;MNOSD-28810&#x27; vs PDF: &#x27;&#x27;); Issue Description mismatch; Functional Model mismatch; Unmapped Row Pair (Force Joined)</td></tr>
 </tbody>
 </table>
 
 #### Column Check Summary
 | Column | Match Status |
 |--------|--------------|
-| Account Name | ✔ PASS |
+| Account Name | ✖ FAIL |
 | Client Tracking Number | ✔ PASS |
-| SSC ID | ✔ PASS |
+| SSC ID | ✖ FAIL |
 | Issue Description | ✖ FAIL |
-| Functional Model | ✔ PASS |
+| Functional Model | ✖ FAIL |
 
 #### Overall Result
 **FAILED**
 
-Reason: 2 row(s) contain mismatched data.
+Reason: 6 row(s) contain mismatched data.
 
 ## 5. Table of Contents
 - **TOC Structure:** VALID (visual TOC)

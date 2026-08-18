@@ -2,14 +2,9 @@ pymupdf
 pdfplumber
 pandas
 openpyxl
-requests
-python-dotenv
 streamlit
 langgraph
-streamlit
-librosa
-numpy
+requests
+python-dotenv
 pandas
-scikit-learn
-tensorflow
-matplotlib
+numpy

@@ -211,19 +211,11 @@ class ReportService:
 
         if matching_block:
             jira_lines = []
-            print(f"Validating {len(matching_block)} extracted Jira tickets against live Jira board...")
+            print(f"Found {len(matching_block)} extracted Jira tickets in the PDF. Skipping live Jira API validation...")
             
-            import concurrent.futures
-            
-            def check_ticket(t):
-                is_valid = self.jira_service.ticket_exists(t)
-                status = "[Verified in Jira]" if is_valid else "[NOT FOUND in Jira]"
-                return f"- jira ticket found ({system_determined_latest_version}): {t} {status}"
-            
-            with concurrent.futures.ThreadPoolExecutor(max_workers=10) as executor:
-                results = list(executor.map(check_ticket, matching_block))
+            for t in matching_block:
+                jira_lines.append(f"- jira ticket found ({system_determined_latest_version}): {t} [found in pdf]")
                 
-            jira_lines.extend(results)
             jira_tickets_str = "\n".join(jira_lines)
         else:
             jira_tickets_str = "jira ticket not found in pdf"

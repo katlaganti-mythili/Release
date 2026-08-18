@@ -330,20 +330,11 @@ class ReportService:
 
         if matching_block:
             jira_lines = []
-            print(f"Validating {len(matching_block)} extracted SSC IDs against live Jira board...")
+            print(f"Found {len(matching_block)} extracted SSC IDs in the PDF. Skipping live Jira API validation...")
             
-            import concurrent.futures
-            
-            def check_ticket(t):
-                is_valid, error_msg = self.jira_service.ticket_exists(t)
-                status = "[Verified in Jira]" if is_valid else "[found in pdf]"
+            for t in matching_block:
+                jira_lines.append(f"- SSC ID found ({system_determined_latest_version}): {t} [found in pdf]")
                 
-                return f"- SSC ID found ({system_determined_latest_version}): {t} {status}"
-            
-            with concurrent.futures.ThreadPoolExecutor(max_workers=25) as executor:
-                results = list(executor.map(check_ticket, matching_block))
-                
-            jira_lines.extend(results)
             jira_tickets_str = "\n".join(jira_lines)
         else:
             jira_tickets_str = "SSC IDs not found in latest version section of PDF"

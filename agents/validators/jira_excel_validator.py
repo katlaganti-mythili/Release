@@ -182,6 +182,7 @@ class JiraExcelValidator:
         """
         filtered = []
         target_app = self.normalize_compare(application_name)
+        target_app_no_spaces = target_app.replace(" ", "")
 
         for r in records:
             app_val = self.normalize_compare(r.get("application", ""))
@@ -191,7 +192,10 @@ class JiraExcelValidator:
         if not filtered:
             for r in records:
                 app_val = self.normalize_compare(r.get("application", ""))
-                if target_app in app_val or (app_val and app_val in target_app):
+                app_val_no_spaces = app_val.replace(" ", "")
+                if target_app in app_val or (app_val and app_val in target_app) or \
+                   (target_app_no_spaces and target_app_no_spaces in app_val_no_spaces) or \
+                   (app_val_no_spaces and app_val_no_spaces in target_app_no_spaces):
                     filtered.append(r)
                     
         return filtered
@@ -382,29 +386,25 @@ class JiraExcelValidator:
                 status = "Missing in Excel"
                 remarks.append("Missing in Excel")
             else:
-                if comparison["Account Name (Excel)"] and comparison["Account Name (PDF)"] and self.normalize_compare(comparison["Account Name (Excel)"]) != self.normalize_compare(comparison["Account Name (PDF)"]):
+                if self.normalize_compare(comparison["Account Name (Excel)"]) != self.normalize_compare(comparison["Account Name (PDF)"]):
                     status = "FAIL"
                     remarks.append(f"Account Name mismatch (Excel: '{comparison['Account Name (Excel)']}' vs PDF: '{comparison['Account Name (PDF)']}')")
                 if (
-                    comparison["Client Tracking Number (Excel)"]
-                    and comparison["Client Tracking Number (PDF)"]
-                    and self.normalize_ticket_identifier(comparison["Client Tracking Number (Excel)"])
+                    self.normalize_ticket_identifier(comparison["Client Tracking Number (Excel)"])
                     != self.normalize_ticket_identifier(comparison["Client Tracking Number (PDF)"])
                 ):
                     status = "FAIL"
                     remarks.append(f"Client Tracking Number mismatch (Excel: '{comparison['Client Tracking Number (Excel)']}' vs PDF: '{comparison['Client Tracking Number (PDF)']}')")
                 if (
-                    comparison["SSC ID (Excel)"]
-                    and comparison["SSC ID (PDF)"]
-                    and self.normalize_ticket_identifier(comparison["SSC ID (Excel)"])
+                    self.normalize_ticket_identifier(comparison["SSC ID (Excel)"])
                     != self.normalize_ticket_identifier(comparison["SSC ID (PDF)"])
                 ):
                     status = "FAIL"
                     remarks.append(f"SSC ID mismatch (Excel: '{comparison['SSC ID (Excel)']}' vs PDF: '{comparison['SSC ID (PDF)']}')")
-                if comparison["Issue Description (Excel)"] and comparison["Issue Description (PDF)"] and self.normalize_compare(comparison["Issue Description (Excel)"]) != self.normalize_compare(comparison["Issue Description (PDF)"]):
+                if self.normalize_compare(comparison["Issue Description (Excel)"]) != self.normalize_compare(comparison["Issue Description (PDF)"]):
                     status = "FAIL"
                     remarks.append("Issue Description mismatch")
-                if comparison["Functional Model (Excel)"] and comparison["Functional Model (PDF)"] and self.normalize_compare(comparison["Functional Model (Excel)"]) != self.normalize_compare(comparison["Functional Model (PDF)"]):
+                if self.normalize_compare(comparison["Functional Model (Excel)"]) != self.normalize_compare(comparison["Functional Model (PDF)"]):
                     status = "FAIL"
                     remarks.append("Functional Model mismatch")
 

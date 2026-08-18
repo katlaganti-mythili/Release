@@ -11,16 +11,16 @@
 
 ## 3. Release Date Validation
 - **Status:** INVALID
-- **Result:** Found date: 12-11-2020 (Home Page date found: Jul-24-2026), expected date: 08-11-2026
+- **Result:** Found date: 12-11-2020 (Home Page date found: Jul-24-2026), expected date: 08-18-2026
 - **Details:** The extracted date is a previous date (previous).
 
 ## 4. Jira Tickets (Latest Version)
 **Extracted SSC IDs (Latest Version from PDF):**
-- SSC ID found (2.3.15.1[0]): WAMAT-23158 [found in pdf]
+- SSC ID found (2.3.15.1[0]): WAMAT-31047 [found in pdf]
 - SSC ID found (2.3.15.1[0]): WAMAT-26268 [found in pdf]
 - SSC ID found (2.3.15.1[0]): WAMAT-23157 [found in pdf]
-- SSC ID found (2.3.15.1[0]): WAMAT-31047 [found in pdf]
 - SSC ID found (2.3.15.1[0]): MNOSD-15860 [found in pdf]
+- SSC ID found (2.3.15.1[0]): WAMAT-23158 [found in pdf]
 
 **Excel vs PDF Comparison (Under Jira Validation):**
 ### Excel vs Release Notes Validation
@@ -50,7 +50,7 @@
 
 **PDF links extracted from document:**
 - Path: `Documentation/Installation/ARM 2.3.2.0 ARM Logging setup.pdf` | Status: ✅ Successfully opened
+- Path: `Documentation/Installation/ARM_ADFS_Configuration_Details.pdf` | Status: ✅ Successfully opened
 - Path: `Documentation/Installation/ARM 2.3.7.0 WLS Web Middleware Applications Installation.pdf` | Status: ✅ Successfully opened
 - Path: `Documentation/Installation/ARM 2.3.7.0 WAS Web Middleware Applications Installation.pdf` | Status: ✅ Successfully opened
 - Path: `Documentation/Installation/OpenGrid 2.3.15.1 OIDC Guide.pdf` | Status: ✅ Successfully opened
-- Path: `Documentation/Installation/ARM_ADFS_Configuration_Details.pdf` | Status: ✅ Successfully opened
